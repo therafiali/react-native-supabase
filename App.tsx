@@ -10,14 +10,14 @@ import {
   SafeAreaView,
   StyleSheet,
   View,
-  Text,
   ActivityIndicator,
 } from 'react-native';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { AuthScreen } from './src/screens/AuthScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
 
 const MainContent = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -35,16 +35,7 @@ const MainContent = () => {
     );
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.welcomeText}>Welcome, {user.email}</Text>
-        <Text style={styles.signOutText} onPress={signOut}>
-          Sign Out
-        </Text>
-      </View>
-    </SafeAreaView>
-  );
+  return <HomeScreen />;
 };
 
 function App(): React.JSX.Element {
@@ -64,20 +55,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  welcomeText: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  signOutText: {
-    color: 'blue',
-    fontSize: 16,
   },
 });
 
