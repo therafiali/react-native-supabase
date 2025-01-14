@@ -133,7 +133,7 @@ const ReviewRequestScreen = () => {
                   style={styles.doneButton}
                   onPress={handleDone}
                 >
-                  <Text style={styles.doneButtonText}>Payment Button</Text>
+                  <Text style={styles.doneButtonText}>Done</Text>
                 </TouchableOpacity>
               )}
             </View>

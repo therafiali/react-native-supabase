@@ -26,12 +26,15 @@ import EnterPromocodeScreen from '../screens/EnterPromocodeScreen';
 import PlatformScreenRecharge from '../screens/PlatformScreenRecharge';
 import UsernameRecharge from '../screens/UsernameRecharge';
 import ReviewRechargeScreen from '../screens/ReviewRechargeScreen';
-
+import PaymentMethodDeposit from '../screens/PaymentMethodDeposit';
+import AmountDepositScreen from '../screens/AmountDepositScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="MainTabs" component={BottomTabs} />
@@ -48,6 +51,8 @@ const AppNavigator = () => {
       <Stack.Screen name="ReviewRequest" component={ReviewRequestScreen} />
       <Stack.Screen name="EnterAmount" component={EnterAmountScreen} />
       <Stack.Screen name="WebView" component={WebViewScreen} />
+      <Stack.Screen name="PaymentMethodDeposit" component={PaymentMethodDeposit} />
+
       <Stack.Screen name="OtpScreen" component={OTPVerificationScreen} />
       <Stack.Screen name="RemainingLimit" component={RemainingLimitScreen} />
       <Stack.Screen name="CheckStatus" component={CheckStatusScreen} />
@@ -56,6 +61,8 @@ const AppNavigator = () => {
       <Stack.Screen name="PlatformScreenRecharge" component={PlatformScreenRecharge} />
       <Stack.Screen name="UsernameRecharge" component={UsernameRecharge} />
       <Stack.Screen name="ReviewRechargeScreen" component={ReviewRechargeScreen} />
+      <Stack.Screen name="AmountDepositScreen" component={AmountDepositScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
       <Stack.Screen
         name="ForgotPassword"
         component={ForgotPasswordScreen}

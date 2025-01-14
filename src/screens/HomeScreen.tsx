@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { supabase } from '../lib/supabase';
 
 type RootStackParamList = {
+  AmountDepositScreen: undefined;
   EnterAmount: undefined;
   RemainingLimit: undefined;
   CheckStatus: undefined;
@@ -13,11 +15,6 @@ type RootStackParamList = {
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EnterAmount'>;
-
-const ICONS = {
-  deposit: 'data:image/svg+xml;base64,...', // Replace with your base64 SVG
-  withdraw: 'data:image/svg+xml;base64,...', // Replace with your base64 SVG
-};
 
 const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -41,10 +38,7 @@ const HomeScreen = () => {
         .select('deposit_balance')
         .single();
 
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
       setBalance(userData?.deposit_balance || 0);
     } catch (error) {
       console.error('Error fetching balance:', error);
@@ -56,60 +50,91 @@ const HomeScreen = () => {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
+        {/* Account & Routing */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Wallet</Text>
+          <Text style={styles.headerText}>Wallet</Text>
+          <TouchableOpacity style={styles.routingButton}>
+           
+          
+          </TouchableOpacity>
         </View>
 
+        {/* Balance Card */}
         <View style={styles.balanceCard}>
-          <Text style={styles.balanceLabel}>Account balance</Text>
           {isLoading ? (
             <ActivityIndicator size="large" color="#000000" />
           ) : (
             <Text style={styles.balanceAmount}>${balance?.toFixed(2) || '0.00'}</Text>
           )}
+          <View style={styles.balanceActions}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => navigation.navigate('AmountDepositScreen')}
+            >
+              <Icon name="plus" size={20} color="#000" style={styles.actionIcon} />
+              <Text style={styles.actionButtonText}>Add Cash</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => navigation.navigate('EnterAmount')}
+            >
+              <Icon name="minus" size={20} color="#000" style={styles.actionIcon} />
+              <Text style={styles.actionButtonText}>Cash Out</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Image 
-              source={{ uri: ICONS.deposit }}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionText}>Deposit</Text>
-            <Text style={styles.arrow}>→</Text>
-          </TouchableOpacity>
 
+        {/* Grid Items */}
+        <View style={styles.gridContainer}>
           <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('EnterAmount')}
-          >
-            <Image 
-              source={{ uri: ICONS.withdraw }}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionText}>Withdraw</Text>
-            <Text style={styles.arrow}>→</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity 
-            style={styles.actionButton} 
+            style={styles.gridItem}
             onPress={() => navigation.navigate('RemainingLimit')}
           >
-            <Text style={styles.actionText}>Remaining Limit</Text>
+            <View style={[styles.iconContainer, { backgroundColor: '#E3F2FD' }]}>
+              <Icon name="bank-transfer" size={24} color="#2196F3" />
+            </View>
+            <Text style={styles.gridItemLabel}>Borrow</Text>
+            <Text style={styles.gridItemValue}>$0.00</Text>
+            <Text style={styles.gridItemSubtext}>Available</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.actionButton} 
-            onPress={() => navigation.navigate('CheckStatus')}
-          >
-            <Text style={styles.actionText}>Check Status</Text>
+          <TouchableOpacity style={styles.gridItem}>
+            <View style={[styles.iconContainer, { backgroundColor: '#E8F5E9' }]}>
+              <Icon name="bank" size={24} color="#4CAF50" />
+            </View>
+            <Text style={styles.gridItemLabel}>Taxes</Text>
+            <Text style={styles.gridItemSubtext}>Pay $0 to file</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.actionButton} 
-            onPress={() => navigation.navigate('VIPCode')}
-          >
-            <Text style={styles.actionText}>VIP Code</Text>
+          <TouchableOpacity style={styles.gridItem}>
+            <View style={[styles.iconContainer, { backgroundColor: '#E0F2F1' }]}>
+              <Icon name="piggy-bank" size={24} color="#009688" />
+            </View>
+            <Text style={styles.gridItemLabel}>Savings</Text>
+            <Text style={styles.gridItemSubtext}>Up to 4.5% interest</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.gridItem}>
+            <View style={[styles.iconContainer, { backgroundColor: '#F3E5F5' }]}>
+              <Icon name="download" size={24} color="#9C27B0" />
+            </View>
+            <Text style={styles.gridItemLabel}>Paychecks</Text>
+            <Text style={styles.gridItemSubtext}>Get direct deposits early</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.gridItem}>
+            <View style={[styles.iconContainer, { backgroundColor: '#E0F7FA' }]}>
+              <Icon name="bitcoin" size={24} color="#00BCD4" />
+            </View>
+            <Text style={styles.gridItemLabel}>Bitcoin</Text>
+            <Text style={styles.gridItemValue}>$526</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.gridItem}>
+            <View style={[styles.iconContainer, { backgroundColor: '#F3E5F5' }]}>
+              <Icon name="chart-line" size={24} color="#9C27B0" />
+            </View>
+            <Text style={styles.gridItemLabel}>Stocks</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -120,74 +145,112 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
     backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 10,
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  headerTitle: {
-    fontSize: 24,
+  headerText: {
+    fontSize: 20,
+    color: 'black',
+    paddingVertical: 10,
     fontWeight: 'bold',
+  },
+  routingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 4,
+  },
+  routingText: {
+    fontSize: 14,
+    color: '#666666',
+    marginRight: 4,
   },
   balanceCard: {
     backgroundColor: '#FFFFFF',
-    padding: 20,
-    borderRadius: 15,
-    marginTop: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    marginBottom: 24,
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    alignItems: 'center',
-  },
-  balanceLabel: {
-    fontSize: 18,
-    color: '#000000',
-    marginBottom: 8,
+    shadowRadius: 8,
   },
   balanceAmount: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 40,
+    fontWeight: '600',
     color: '#000000',
+    marginBottom: 24,
   },
-  actionsContainer: {
-    flexDirection: 'column',
-    marginTop: 20,
-    gap: 15,
+  balanceActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
   },
   actionButton: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    borderRadius: 15,
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F5F5F5',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 24,
+  },
+  actionIcon: {
+    marginRight: 8,
+  },
+  actionButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  gridItem: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 16,
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 8,
   },
-  actionText: {
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  gridItemLabel: {
     fontSize: 16,
+    fontWeight: '600',
     color: '#000000',
+    marginBottom: 4,
   },
-
-  actionIcon: {
-    width: 40,
-    height: 40,
-    marginBottom: 10,
+  gridItemValue: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 2,
   },
-
-  arrow: {
-    position: 'absolute',
-    right: 15,
-    top: '50%',
-    fontSize: 20,
-    color: '#4630EB',
+  gridItemSubtext: {
+    fontSize: 13,
+    color: '#666666',
   },
 });
 

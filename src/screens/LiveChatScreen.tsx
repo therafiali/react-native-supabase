@@ -8,11 +8,23 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActionSheetIOS,
+  Alert,
   Image,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScreenWrapper from '../components/ScreenWrapper';
+import { launchCamera, launchImageLibrary, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
-const INITIAL_MESSAGES = [
+type Message = {
+  id: string;
+  text: string;
+  isUser: boolean;
+  timestamp: string;
+  image?: string;
+};
+
+const INITIAL_MESSAGES: Message[] = [
   {
     id: '1',
     text: 'How may I assist you?',
@@ -22,13 +34,13 @@ const INITIAL_MESSAGES = [
 ];
 
 const LiveChatScreen = () => {
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [newMessage, setNewMessage] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSend = () => {
     if (newMessage.trim()) {
-      const message = {
+      const message: Message = {
         id: Date.now().toString(),
         text: newMessage.trim(),
         isUser: true,
@@ -39,7 +51,7 @@ const LiveChatScreen = () => {
       
       // Simulate agent response
       setTimeout(() => {
-        const agentResponse = {
+        const agentResponse: Message = {
           id: (Date.now() + 1).toString(),
           text: 'Thank you for your message. Our agent will respond shortly.',
           isUser: false,
@@ -50,11 +62,108 @@ const LiveChatScreen = () => {
     }
   };
 
+  const handleAttachment = () => {
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['Cancel', 'Take Photo', 'Choose from Library'],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 1) {
+            handleTakePhoto();
+          } else if (buttonIndex === 2) {
+            handleChoosePhoto();
+          }
+        }
+      );
+    } else {
+      Alert.alert(
+        'Add Attachment',
+        'Choose an option',
+        [
+          { text: 'Take Photo', onPress: handleTakePhoto },
+          { text: 'Choose from Library', onPress: handleChoosePhoto },
+          { text: 'Cancel', style: 'cancel' },
+        ]
+      );
+    }
+  };
+
+  const handleTakePhoto = () => {
+    const options: CameraOptions = {
+      mediaType: 'photo',
+      quality: 1,
+      saveToPhotos: true,
+    };
+
+    launchCamera(options, (response) => {
+      if (response.didCancel) {
+        return;
+      }
+
+      if (response.errorCode) {
+        Alert.alert('Error', response.errorMessage);
+        return;
+      }
+
+      if (response.assets && response.assets[0].uri) {
+        const message: Message = {
+          id: Date.now().toString(),
+          text: '',
+          isUser: true,
+          timestamp: 'Today',
+          image: response.assets[0].uri,
+        };
+        setMessages(prev => [...prev, message]);
+      }
+    });
+  };
+
+  const handleChoosePhoto = () => {
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      quality: 1,
+      selectionLimit: 1,
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        return;
+      }
+
+      if (response.errorCode) {
+        Alert.alert('Error', response.errorMessage);
+        return;
+      }
+
+      if (response.assets && response.assets[0].uri) {
+        const message: Message = {
+          id: Date.now().toString(),
+          text: '',
+          isUser: true,
+          timestamp: 'Today',
+          image: response.assets[0].uri,
+        };
+        setMessages(prev => [...prev, message]);
+      }
+    });
+  };
+
   return (
     <ScreenWrapper>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Live Chat</Text>
+          <TouchableOpacity style={styles.backButton}>
+            <Icon name="close" size={24} color="#000" />
+          </TouchableOpacity>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>Support Chat</Text>
+            <Icon name="check-circle" size={16} color="#22C55E" />
+          </View>
+          <View style={styles.userAvatar}>
+            <Text style={styles.userInitials}>JD</Text>
+          </View>
         </View>
 
         <KeyboardAvoidingView 
@@ -66,7 +175,6 @@ const LiveChatScreen = () => {
             style={styles.messagesContainer}
             contentContainerStyle={styles.messagesContent}
             onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}>
-            <Text style={styles.dateHeader}>Today</Text>
             {messages.map((message) => (
               <View
                 key={message.id}
@@ -74,51 +182,54 @@ const LiveChatScreen = () => {
                   styles.messageRow,
                   message.isUser ? styles.userMessageRow : null,
                 ]}>
-                {!message.isUser && (
-                  <Image
-                    source={{ uri: 'https://ui-avatars.com/api/?name=Agent&background=0D8ABC&color=fff' }}
-                    style={styles.messageAvatar}
-                  />
-                )}
                 <View
                   style={[
                     styles.messageBubble,
                     message.isUser ? styles.userMessageBubble : styles.agentMessageBubble,
                   ]}>
-                  <Text style={[
-                    styles.messageText,
-                    message.isUser ? styles.userMessageText : null,
-                  ]}>{message.text}</Text>
+                  {message.image ? (
+                    <Image 
+                      source={{ uri: message.image }} 
+                      style={styles.messageImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <Text style={[
+                      styles.messageText,
+                      message.isUser ? styles.userMessageText : null,
+                    ]}>{message.text}</Text>
+                  )}
                 </View>
-                {message.isUser && (
-                  <Image
-                    source={{ uri: 'https://ui-avatars.com/api/?name=User&background=7A1FA2&color=fff' }}
-                    style={styles.messageAvatar}
-                  />
-                )}
+                <Text style={styles.timestamp}>{message.timestamp}</Text>
               </View>
             ))}
           </ScrollView>
 
           <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Type your message here..."
-              value={newMessage}
-              onChangeText={setNewMessage}
-              multiline
-              maxLength={500}
-              onSubmitEditing={handleSend}
-            />
-            <TouchableOpacity 
-              style={styles.sendButton} 
-              onPress={handleSend}
-              disabled={!newMessage.trim()}>
-              <Image
-                source={{ uri: 'https://img.icons8.com/ios-filled/50/ffffff/sent.png' }}
-                style={[styles.sendIcon, !newMessage.trim() && styles.sendIconDisabled]}
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                placeholder="Chat with Support"
+                value={newMessage}
+                onChangeText={setNewMessage}
+                returnKeyType="send"
               />
-            </TouchableOpacity>
+              {newMessage.trim() ? (
+                <TouchableOpacity 
+                  style={styles.sendButton} 
+                  onPress={handleSend}
+                >
+                  <Icon name="send" size={20} color="#22C55E" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity 
+                  style={styles.addButton}
+                  onPress={handleAttachment}
+                >
+                  <Icon name="plus" size={24} color="#22C55E" />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -135,14 +246,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: '#F0F0F0',
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
     color: '#000000',
+  },
+  userAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#22C55E',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userInitials: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   messagesContainer: {
     flex: 1,
@@ -151,79 +286,69 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32,
   },
-  dateHeader: {
-    textAlign: 'center',
-    color: '#666666',
-    marginBottom: 16,
-    fontSize: 12,
-  },
   messageRow: {
-    flexDirection: 'row',
     marginBottom: 16,
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   userMessageRow: {
-    justifyContent: 'flex-end',
-  },
-  messageAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginHorizontal: 8,
+    alignItems: 'flex-end',
   },
   messageBubble: {
-    maxWidth: '70%',
+    maxWidth: '80%',
     padding: 12,
-    borderRadius: 20,
+    borderRadius: 16,
+    backgroundColor: '#F0F0F0',
+    overflow: 'hidden',
   },
   userMessageBubble: {
-    backgroundColor: '#0000FF',
+    backgroundColor: '#22C55E',
   },
   agentMessageBubble: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#F8F8F8',
   },
   messageText: {
     fontSize: 14,
     color: '#000000',
+    lineHeight: 20,
+  },
+  messageImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 12,
   },
   userMessageText: {
     color: '#FFFFFF',
   },
+  timestamp: {
+    fontSize: 11,
+    color: '#999999',
+    marginTop: 4,
+  },
   inputContainer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+    backgroundColor: '#FFFFFF',
+    bottom: 60,
+  },
+  inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
-    paddingBottom: Platform.OS === 'ios' ? 25 : 8,
-    marginBottom: 90,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F8F8',
+    borderRadius: 20,
+    paddingHorizontal: 12,
   },
   input: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    maxHeight: 100,
-    marginRight: 8,
     fontSize: 14,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#0000FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
+    padding: 8,
   },
-  sendIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#FFFFFF',
-  },
-  sendIconDisabled: {
-    opacity: 0.5,
+  addButton: {
+    padding: 8,
   },
 });
 

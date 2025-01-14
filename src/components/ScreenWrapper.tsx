@@ -5,13 +5,16 @@ import ProfileButton from './ProfileButton';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
+  profileBar?: boolean;
 }
 
-const ScreenWrapper = ({ children }: ScreenWrapperProps) => {
+const ScreenWrapper = ({ children, profileBar }: ScreenWrapperProps) => {
+  console.log(profileBar, '===========>>');
+
   return (
     <SafeAreaView style={styles.container}>
       {children}
-      <ProfileButton />
+      {profileBar !== false && <ProfileButton />}
     </SafeAreaView>
   );
 };

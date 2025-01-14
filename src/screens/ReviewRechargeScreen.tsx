@@ -23,7 +23,7 @@ type RootStackParamList = {
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'MainTabs'>;
 
-const ReviewRechargeScreen = () => {
+const ReviewRequestScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const { username, amount, platform } = route.params as RouteParams;
@@ -35,7 +35,7 @@ const ReviewRechargeScreen = () => {
       case 'cashapp': return 'CashApp';
       case 'chime': return 'Chime';
       case 'venmo': return 'Venmo';
-      default: return method; 
+      default: return method;
     }
   };
 
@@ -72,22 +72,22 @@ const ReviewRechargeScreen = () => {
 
         <View style={styles.content}>
           <Text style={styles.description}>
-          Payment Link only valid for 10 minutes.
+            Please review your Recharge request
           </Text>
 
-          {/* <View style={styles.detailsContainer}>
+          <View style={styles.detailsContainer}>
             <Text style={styles.detailText}>Username: {username}</Text>
             <Text style={styles.detailText}>Amount: ${amount}</Text>
-            {paymentDetails?.map((detail, index) => (
+            <Text style={styles.detailText}>Platform: {platform}</Text>
+            {/* {paymentDetails?.map((detail, index) => (
               <Text key={index} style={styles.detailText}>
                 {getMethodDisplayName(detail.method)}: {detail.id}
               </Text>
-            ))}
-          </View> */}
+            ))} */}
+          </View>
 
-       
           <Text style={styles.confirmText}>
-          Payment Process:-Button links redirects to the relevant payment method.-Simply Pay, Screenshot, and Submit the screenshot within 10 mins. Screenshots Submission:- Make sure that Names, Identifier, Date & Time are clearly visible. Fake Screenshots = Permanent Blacklist!
+            Is all the information correct?
           </Text>
 
           <View style={styles.buttonContainer}>
@@ -117,7 +117,7 @@ const ReviewRechargeScreen = () => {
               {isLoading ? (
                 <>
                   <Text style={styles.modalTitle}>
-                    Submitting your redeem{'\n'}request..
+                    Submitting your Recharge{'\n'}request..
                   </Text>
                   <Text style={styles.modalSubtitle}>
                     Please wait a moment.
@@ -171,6 +171,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
+    alignItems: 'center',
+    gap: 20,
+    marginTop: 60,
   },
   description: {
     fontSize: 16,
@@ -179,21 +182,28 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginBottom: 40,
+    textAlign: 'center',
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   detailText: {
-    fontSize: 16,
+    fontSize: 25,
     marginBottom: 10,
     color: '#000',
   },
   confirmText: {
-    fontSize: 16,
+    fontSize: 20  ,
     color: '#000',
     marginBottom: 20,
+    marginTop: 40,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 15,
+    marginTop: 40,
   },
   button: {
     flex: 1,
@@ -258,4 +268,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReviewRechargeScreen; 
+export default ReviewRequestScreen; 

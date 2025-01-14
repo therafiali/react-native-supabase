@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TextInput,
   Alert,
   ScrollView,
+  Image,
+  Animated,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -48,6 +50,52 @@ const PaymentDetailsScreen = () => {
       error: '',
     }))
   );
+
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+  const fadeAnim = new Animated.Value(1);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const pulseWarning = Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0.2,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      })
+    ]);
+
+    Animated.loop(pulseWarning).start();
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes < 10 ? `0${minutes}` : minutes}:${secs < 10 ? `0${secs}` : secs}`;
+  };
+
+  const methodIcons = {
+    cashapp: 'https://img.icons8.com/ios-filled/50/40C057/cash-app.png',
+    chime: 'https://img.icons8.com/ios-filled/50/40C057/chime.png',
+    venmo: 'https://img.icons8.com/ios-filled/50/4AF2F6/venmo.png',
+  };
 
   const validatePaymentId = (method: string, value: string) => {
     switch (method) {
@@ -130,14 +178,29 @@ const PaymentDetailsScreen = () => {
           <Text style={styles.headerTitle}>Enter Details</Text>
         </View>
 
+        <View style={styles.timerContainer}>
+          <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+          <Animated.View style={[styles.warningContainer, { opacity: fadeAnim }]}>
+            <Text style={styles.warningText}>
+              Please complete the details before timer expires
+            </Text>
+          </Animated.View>
+        </View>
+
         <ScrollView style={styles.content}>
           <Text style={styles.description}>
             Please provide the payment details for your selected methods
           </Text>
 
           {paymentInputs.map((input, index) => (
-            <View key={input.method} style={styles.inputContainer}>
-              <Text style={styles.label}>{getMethodTitle(input.method)}</Text>
+            <View key={input.method} style={styles.methodCard}>
+              <View style={styles.methodHeader}>
+                <Image 
+                  source={{ uri: methodIcons[input.method as keyof typeof methodIcons] }} 
+                  style={styles.methodIcon} 
+                />
+                <Text style={styles.label}>{getMethodTitle(input.method)}</Text>
+              </View>
               <TextInput
                 style={[styles.input, input.error ? styles.inputError : null]}
                 placeholder={getMethodPlaceholder(input.method)}
@@ -209,18 +272,23 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#DDD',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
+    backgroundColor: '#F8F8F8',
   },
   inputError: {
-    borderBottomColor: '#FF0000',
+    borderColor: '#FF0000',
+    backgroundColor: '#FFF5F5',
   },
   errorText: {
     color: '#FF0000',
     fontSize: 14,
     marginTop: 8,
+    fontWeight: '500',
   },
   submitButton: {
     backgroundColor: '#000000',
@@ -228,6 +296,14 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginHorizontal: 20,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   submitButtonDisabled: {
     opacity: 0.6,
@@ -237,6 +313,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  timerContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+    paddingHorizontal: 20,
+  },
+  timerText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#000',
+    fontFamily: 'System',
+  },
+  warningContainer: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#FFE5E5',
+    borderRadius: 8,
+    width: '100%',
+  },
+  warningText: {
+    color: '#FF0000',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  methodCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  methodHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  methodIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 12,
   },
 });
 

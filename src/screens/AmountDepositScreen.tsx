@@ -4,32 +4,40 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ScreenWrapper from '../components/ScreenWrapper';
 
-type RootStackParamList = {
-  SelectPlatform: undefined;
-  EnterUsername: undefined;
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList, 'SelectPlatform'>;
-
 const { width } = Dimensions.get('window');
 const DIAL_PAD_WIDTH = width * 0.7;
 
-const GameActionScreen = () => {
-  const [amount, setAmount] = useState('50');
-  const [error, setError] = useState('');
-  const quickAmounts = [10, 50, 100];
+type RootStackParamList = {
+  PaymentMethods: undefined;
+};
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'PaymentMethods'>;
+
+const WALLET_BALANCE = 100; // Updated to match HomeScreen balance
+
+const AmountDepositScreen = () => {
+  const [amount, setAmount] = useState('10');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const navigation = useNavigation<NavigationProp>();
+  const quickAmounts = [10, 50, 100];
+
+  const loadingMessages = [
+    'Processing your request...',
+    'Checking availability...',
+    'Verifying transaction details...',
+    'Finalizing deposit setup...'
+  ];
 
   const handleNumberPress = (num: string) => {
-    setError(''); // Clear error when amount changes
     if (num === 'backspace') {
       setAmount(prev => prev.slice(0, -1) || '0');
     } else {
@@ -37,35 +45,61 @@ const GameActionScreen = () => {
     }
   };
 
-  const handleRecharge = () => {
+  const handleContinue = () => {
     const numAmount = parseFloat(amount);
-    if (numAmount < 10) {
-      setError('Amount must be at least $10');
-      Alert.alert('Invalid Amount', 'Amount must be at least $10');
-    } else {
-      setError('');
-      navigation.navigate('Promocode');
+    if (numAmount <= 0) {
+      Alert.alert(
+        'Minimum amount is 10',
+        'The amount entered must be greater than 0.',
+        [{ text: 'OK' }]
+      );
+      return;
     }
+    
+    setIsLoading(true);
+    // Update loading message every 2.5 seconds
+    const interval = setInterval(() => {
+      setLoadingStep(prev => (prev < loadingMessages.length - 1 ? prev + 1 : prev));
+    }, 2500);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      setIsLoading(false);
+      setLoadingStep(0);
+      navigation.navigate('PaymentMethodDeposit');
+    }, 10000);
   };
 
-  const handleRedeem = () => {
-    const numAmount = parseFloat(amount);
-    if (numAmount < 30) {
-      setError('Amount must be at least $30');
-      Alert.alert('Invalid Amount', 'Amount must be at least $30');
-    } else {
-      setError('');
-      navigation.navigate('SelectPlatform');
-    }
-  };
+  if (isLoading) {
+    return (
+      <ScreenWrapper>
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text style={styles.loaderText}>{loadingMessages[loadingStep]}</Text>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Game Action</Text>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Enter Amount</Text>
         </View>
+
+        {/* Description */}
+        <Text style={styles.description}>
+          Pick any amount and balance to enter{'\n'}
+          custom amount to deposit.
+        </Text>
 
         {/* Username */}
         <View style={styles.userContainer}>
@@ -77,8 +111,6 @@ const GameActionScreen = () => {
           <Text style={styles.currencySymbol}>$</Text>
           <Text style={styles.amount}>{amount}</Text>
         </View>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         {/* Quick Amount Buttons */}
         <View style={styles.quickAmountContainer}>
@@ -115,21 +147,13 @@ const GameActionScreen = () => {
           ))}
         </View>
 
-        {/* Action Buttons */}
-        <View style={styles.actionContainer}>
-          <TouchableOpacity 
-            style={styles.rechargeButton}
-            onPress={handleRecharge}
-          >
-            <Text style={styles.buttonText}>Recharge</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.redeemButton}
-            onPress={handleRedeem}
-          >
-            <Text style={styles.buttonText}>Redeem</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Continue Button */}
+        <TouchableOpacity 
+          style={styles.continueButton}
+          onPress={handleContinue}
+        >
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
       </View>
     </ScreenWrapper>
   );
@@ -144,20 +168,32 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
     width: '100%',
   },
+  backButton: {
+    marginRight: 15,
+  },
+  backButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
   },
+  description: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 20,
+    lineHeight: 24,
+  },
   userContainer: {
     alignItems: 'center',
     paddingVertical: 16,
-    width: '100%',
   },
   username: {
     fontSize: 16,
@@ -171,7 +207,7 @@ const styles = StyleSheet.create({
   },
   currencySymbol: {
     fontSize: 24,
-    color: '#FF1493',
+    color: '#000',
     marginRight: 4,
   },
   amount: {
@@ -191,10 +227,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 30,
     marginHorizontal: 8,
-    color: 'white',
   },
   quickAmountText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '500',
   },
@@ -223,56 +258,30 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#000',
   },
-  actionContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    width: '100%',
-    paddingBottom: 20,
-  },
-  rechargeButton: {
-    flex: 1,
-    fontSize: 18,
-    backgroundColor: '#00C853',
-    padding: 16,
+  continueButton: {
+    backgroundColor: '#000000',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 30,
-    marginRight: 8,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
+    width: '90%',
+    marginBottom: 20,
   },
-  redeemButton: {
-    flex: 1,
-    backgroundColor: '#00C853',
-    padding: 16,
-    borderRadius: 30,
-    marginLeft: 8,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-  },
-  buttonText: {
+  continueButtonText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  errorText: {
-    color: '#FF0000',
-    fontSize: 14,
-    marginTop: -10,
-    marginBottom: 10,
-    textAlign: 'center',
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loaderText: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
-export default GameActionScreen; 
+export default AmountDepositScreen; 

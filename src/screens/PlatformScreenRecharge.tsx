@@ -13,10 +13,11 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ScreenWrapper from '../components/ScreenWrapper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const { width, height } = Dimensions.get('window');
+const { width, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9;
-const CARD_HEIGHT = height * 0.35;
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.35;
 const SPACING = 16;
 
 type RootStackParamList = {
@@ -28,55 +29,126 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'EnterUsername'>;
 const platforms = [
   {
     id: '1',
-    name: 'ORION STARS',
+    title: 'ORION STARS',
+    subtitle: 'Tap the button below to Play',
     image: 'https://oriongames.net/wp-content/uploads/2022/04/LibraryHeroImage-1920x620.png',
+    playUrl: 'http://start.orionstars.vip:8580/index.html?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiIyODk0M2I5ZmMyZDk0MjI0MzU4YzI1NWFiZDFmMjdkZSIsInRzIjoxNzM2NjE3MTAyLCJleHAiOjE3MzkwMzYzMDJ9.CyBMJobAJJTpvpvx7Lo29afoede84AeKucNovNbhp44',
+    downloadUrl: 'https://orionstar.us/download',
   },
   {
     id: '2',
-    name: 'FIRE KIRIN',
+    title: 'FIRE KIRIN',
+    subtitle: 'Tap the button below to Play',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs73q_9baM_h0QX1WfckYymxwUFscsgDmDoA&s',
+    playUrl: 'http://firekirin.xyz:8580/index.html',
+    downloadUrl: 'https://firekirin.com/download',
   },
   {
     id: '3',
-    name: 'GAME VAULT',
+    title: 'GAME VAULT',
+    subtitle: 'Tap the button below to Play',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnARhUnAhl29QEtORTociKKfPU_ZvcVud6INF4mJ8LeoPXLE2ls6TDLfHb_kv71m0JKk0&usqp=CAU',
+    playUrl: 'http://gamevault.me:8580/index.html',
+    downloadUrl: 'https://gamevault.com/download',
   },
   {
     id: '4',
-    name: 'VBLINK',
+    title: 'VBLINK',
+    subtitle: 'Tap the button below to Play',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0bkKRMKvP3m1mXAb2rV1BOGUgioJMzc26DA&s',
+    playUrl: 'https://www.vblink777.club/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI2ZjM1YTM1OTU0N2MwOWZiYWMzOTUyNzI1NTBjNWNkZSIsInRzIjoxNzM2NjE3MjYwLCJleHAiOjE3MzkwMzY0NjB9.nj_PehGSp-e0OzFlAWBPztAp__N7gpiC6MfXb8n90zU',
+    downloadUrl: 'https://www.vblink777.club/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI2ZjM1YTM1OTU0N2MwOWZiYWMzOTUyNzI1NTBjNWNkZSIsInRzIjoxNzM2NjE3MjYwLCJleHAiOjE3MzkwMzY0NjB9.nj_PehGSp-e0OzFlAWBPztAp__N7gpiC6MfXb8n90zU',
   },
   {
     id: '5',
-    name: 'LUCKY STARS',
+    title: 'VEGAS SWEEPS',
     image: 'https://oriongames.net/wp-content/uploads/2022/04/LibraryHeroImage-1920x620.png',
+    playUrl: 'https://m.lasvegassweeps.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlOTk2NmUxN2I3OWUzZDRkNTE2YTg3ZWYyMjNjOThhYSIsInRzIjoxNzM2NjE3MjY4LCJleHAiOjE3MzkwMzY0Njh9.iEW-Ggq0J91GkBjo6v9F7SXrtFvvZDJTOlzGlaP_bH0',
+    downloadUrl: 'https://m.lasvegassweeps.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlOTk2NmUxN2I3OWUzZDRkNTE2YTg3ZWYyMjNjOThhYSIsInRzIjoxNzM2NjE3MjY4LCJleHAiOjE3MzkwMzY0Njh9.iEW-Ggq0J91GkBjo6v9F7SXrtFvvZDJTOlzGlaP_bH0',
   },
   {
     id: '6',
-    name: 'ULTRA PANDA',
+    title: 'ULTRA PANDA',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs73q_9baM_h0QX1WfckYymxwUFscsgDmDoA&s',
+    playUrl: 'https://www.ultrapanda.mobi/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlNTY4ZGU1NjQ0Mzk2YTdmNDJmOTNkMDMzOWI4MWY1ZiIsInRzIjoxNzM2NjE3MzE0LCJleHAiOjE3MzkwMzY1MTR9.mimtqc1NXVfw_95AjcSMCx5eChPduL6XSybpH_5gIIY',
+    downloadUrl: 'https://www.ultrapanda.mobi/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlNTY4ZGU1NjQ0Mzk2YTdmNDJmOTNkMDMzOWI4MWY1ZiIsInRzIjoxNzM2NjE3MzE0LCJleHAiOjE3MzkwMzY1MTR9.mimtqc1NXVfw_95AjcSMCx5eChPduL6XSybpH_5gIIY',
+  },
+  {
+    id: '7',
+    title: 'YOLO',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnARhUnAhl29QEtORTociKKfPU_ZvcVud6INF4mJ8LeoPXLE2ls6TDLfHb_kv71m0JKk0&usqp=CAU',
+    playUrl: 'https://yolo777.game/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiIxYTM2YjZlNzNlOTI3Mjc2MGJkYjczNGZmNmUxNGM3MCIsInRzIjoxNzM2NjE3MzIzLCJleHAiOjE3MzkwMzY1MjN9.MxukMgfbJNPTp4pFw60G1eRTxXre3p-UyqzP16_lwH4',
+    downloadUrl: 'https://yolo777.game/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiIxYTM2YjZlNzNlOTI3Mjc2MGJkYjczNGZmNmUxNGM3MCIsInRzIjoxNzM2NjE3MzIzLCJleHAiOjE3MzkwMzY1MjN9.MxukMgfbJNPTp4pFw60G1eRTxXre3p-UyqzP16_lwH4',
+  },
+  {
+    id: '8',
+    title: 'JUWA',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0bkKRMKvP3m1mXAb2rV1BOGUgioJMzc26DA&s',
+    playUrl: 'https://dl.juwa777.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJmNTgxMmMyMGMwN2QxNmU0NWIzNzc3NmY2ZjdhNDc2MCIsInRzIjoxNzM2NjE3MzMyLCJleHAiOjE3MzkwMzY1MzJ9.dXadE4vmGW2OMQZfVGzv1LLvNgqJg-Dt8lBms5RtT0Y',
+    downloadUrl: 'https://dl.juwa777.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJmNTgxMmMyMGMwN2QxNmU0NWIzNzc3NmY2ZjdhNDc2MCIsInRzIjoxNzM2NjE3MzMyLCJleHAiOjE3MzkwMzY1MzJ9.dXadE4vmGW2OMQZfVGzv1LLvNgqJg-Dt8lBms5RtT0Y',
+  },
+  {
+    id: '9',
+    title: 'MOOLAH',
+    image: 'https://oriongames.net/wp-content/uploads/2022/04/LibraryHeroImage-1920x620.png',
+    playUrl: 'https://moolah.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlYmNkYjAxODRlNGRkZTFlNjE2MTY3MGM2OGU4ZDRkYSIsInRzIjoxNzM2NjE3MzQzLCJleHAiOjE3MzkwMzY1NDN9.lLL29uBM7RKR_dkh7L_D3N3_z0nT9lnEdcSKr3m8IQE',
+    downloadUrl: 'https://moolah.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlYmNkYjAxODRlNGRkZTFlNjE2MTY3MGM2OGU4ZDRkYSIsInRzIjoxNzM2NjE3MzQzLCJleHAiOjE3MzkwMzY1NDN9.lLL29uBM7RKR_dkh7L_D3N3_z0nT9lnEdcSKr3m8IQE',
+  },
+  {
+    id: '10',
+    title: 'PANDA MASTER',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs73q_9baM_h0QX1WfckYymxwUFscsgDmDoA&s',
+    playUrl: 'https://pandamaster.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI5Yjk3YTJhZTZmNGUxZTk3NDRiNjlhNzIwOTg5ZTc5ZiIsInRzIjoxNzM2NjE3MzU0LCJleHAiOjE3MzkwMzY1NTR9.zGYOqC1o5aLAnJ6cWU-ELt6FGAyWksA1We25gQ5k96Q',
+    downloadUrl: 'https://pandamaster.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI5Yjk3YTJhZTZmNGUxZTk3NDRiNjlhNzIwOTg5ZTc5ZiIsInRzIjoxNzM2NjE3MzU0LCJleHAiOjE3MzkwMzY1NTR9.zGYOqC1o5aLAnJ6cWU-ELt6FGAyWksA1We25gQ5k96Q',
   },
 ];
 
-const SelectPlatformScreen = () => {
+
+
+const PlatformScreenRecharge = () => {
   const navigation = useNavigation<NavigationProp>();
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [username, setUsername] = useState('');
   const [selectedGameName, setSelectedGameName] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  // Add filtered platforms logic
+  const filteredPlatforms = platforms.filter(platform =>
+    platform.title.toLowerCase().includes(searchQuery?.toLowerCase())
+  );
+
+  // Reset active index and selection when search changes
+  useEffect(() => {
+    setActiveIndex(0);
+    const firstPlatform = filteredPlatforms[0];
+    if (firstPlatform) {
+      handleGameSelect(firstPlatform.id);
+    } else {
+      // Clear selection if no results found
+      setSelectedGame(null);
+      setSelectedGameName('');
+    }
+  }, [searchQuery]);
+
   const handleScroll = (event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / (CARD_WIDTH + SPACING));
     setActiveIndex(index);
+    
+    // Automatically select the visible platform
+    const visiblePlatform = filteredPlatforms[index];
+    if (visiblePlatform) {
+      handleGameSelect(visiblePlatform.id);
+    }
   };
 
   const handleGameSelect = (gameId: string) => {
     setSelectedGame(gameId);
     const game = platforms.find(p => p.id === gameId);
     if (game) {
-      setSelectedGameName(game.name);
+      setSelectedGameName(game.title);
     }
   };
 
@@ -94,7 +166,7 @@ const SelectPlatformScreen = () => {
 
   const handleProceed = () => {
     setShowConfirmModal(false);
-    navigation.navigate('ReviewRequest', {
+    navigation.navigate('ReviewRechargeScreen', {
       platform: selectedGameName,
       username: username,
       amount: '300',
@@ -104,7 +176,7 @@ const SelectPlatformScreen = () => {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        {/* Header */}
+        {/* Header with Search */}
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton}
@@ -112,58 +184,64 @@ const SelectPlatformScreen = () => {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Select Platform</Text>
-          <View style={styles.profileBadge}>
-            <Text style={styles.profileText}>JD</Text>
-          </View>
+          <Text style={styles.headerTitle}>Select Platform to Recharge</Text>
         </View>
 
         {/* Platforms Carousel */}
         <View style={styles.carouselWrapper}>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carouselContainer}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            snapToInterval={CARD_WIDTH + SPACING}
-            decelerationRate="fast"
-          >
-            {platforms.map((platform) => (
-              <TouchableOpacity
-                key={platform.id}
-                onPress={() => handleGameSelect(platform.id)}
-                style={[
-                  styles.platformCard,
-                  selectedGame === platform.id && styles.selectedCard
-                ]}
+          {filteredPlatforms.length > 0 ? (
+            <>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.carouselContainer}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                snapToInterval={CARD_WIDTH + SPACING}
+                decelerationRate="fast"
               >
-                <Image
-                  source={{ uri: platform.image }}
-                  style={styles.platformImage}
-                  resizeMode="cover"
-                />
-                <View style={styles.platformInfo}>
-                  <Text style={styles.platformName}>{platform.name}</Text>
-                  <Text style={styles.platformText}>Tap the button below to Redeem</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+                {filteredPlatforms.map((platform) => (
+                  <TouchableOpacity
+                    key={platform.id}
+                    onPress={() => handleGameSelect(platform.id)}
+                    style={[
+                      styles.platformCard,
+                      selectedGame === platform.id && styles.selectedCard
+                    ]}
+                  >
+                    <Image
+                      source={{ uri: platform.image }}
+                      style={styles.platformImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.platformInfo}>
+                      <Text style={styles.platformName}>{platform.title}</Text>
+                      <Text style={styles.platformText}>Tap the button below to Redeem</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
 
-          {/* Pagination Dots */}
-          <View style={styles.pagination}>
-            {platforms.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.paginationDot,
-                  index === activeIndex && styles.paginationDotActive,
-                ]}
-              />
-            ))}
-          </View>
+              {/* Pagination Dots */}
+              <View style={styles.pagination}>
+                {filteredPlatforms.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.paginationDot,
+                      index === activeIndex && styles.paginationDotActive,
+                    ]}
+                  />
+                ))}
+              </View>
+            </>
+          ) : (
+            <View style={styles.noResultsContainer}>
+              <Text style={styles.noResultsText}>No games found</Text>
+              <Text style={styles.noResultsSubText}>Try a different search term</Text>
+            </View>
+          )}
         </View>
 
         {/* Username Input Section */}
@@ -172,6 +250,7 @@ const SelectPlatformScreen = () => {
             Please enter your {selectedGameName} username{'\n'}
             you want to redeem from?
           </Text>
+          <Text style={styles.headergameTitle}>Enter Game Username</Text>
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -194,7 +273,6 @@ const SelectPlatformScreen = () => {
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
-
 
         {/* Confirmation Modal */}
         <Modal
@@ -232,6 +310,7 @@ const SelectPlatformScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -239,27 +318,58 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
+    width: '100%',
+
   },
   backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginRight: 15,
   },
   backButtonText: {
     fontSize: 24,
-    fontWeight: '600',
-    color: '#000',
+    fontWeight: 'bold',
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: 'bold',
+  },
+  headergameTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+    paddingVertical: 12,
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 25,
+    paddingHorizontal: 12,
+    marginRight: 12,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    fontSize: 16,
     color: '#000',
   },
+  profileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  scrollView: {
+    height: SCREEN_HEIGHT * 0.7,
+    backgroundColor: 'white',
+  },
+
+
   profileBadge: {
     width: 36,
     height: 36,
@@ -288,18 +398,27 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 3,
     shadowColor: '#000',
+    borderColor: 'black',
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
+    borderWidth: 2,
+    // borderColor: 'transparent',
   },
   selectedCard: {
     borderColor: '#0066FF',
-    borderWidth: 2,
+    borderWidth: 3,
+    shadowColor: '#0066FF',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
   },
   platformImage: {
     width: '100%',
@@ -449,6 +568,34 @@ const styles = StyleSheet.create({
   proceedButtonText: {
     color: '#000',
   },
+  noResultsContainer: {
+    height: CARD_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    marginHorizontal: SPACING,
+    paddingVertical: 40,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  noResultsText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  noResultsSubText: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
 });
 
-export default SelectPlatformScreen; 
+export default PlatformScreenRecharge; 
