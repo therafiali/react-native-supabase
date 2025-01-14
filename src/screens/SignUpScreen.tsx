@@ -10,39 +10,34 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 
-export const ResetPasswordScreen = () => {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+const SignUpScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleResetPassword = async () => {
-    if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      Alert.alert('Error', 'Password should be at least 6 characters');
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
     try {
       setLoading(true);
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
       });
 
       if (error) throw error;
 
-      Alert.alert('Success', 'Password has been reset successfully', [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('Login'),
-        },
-      ]);
+      Alert.alert(
+        'Success',
+        'Registration successful! Please check your email to verify your account.',
+        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+      );
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to reset password');
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
@@ -50,31 +45,41 @@ export const ResetPasswordScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
+      <Text style={styles.title}>Create Account</Text>
       
       <TextInput
         style={styles.input}
-        placeholder="New Password"
-        value={newPassword}
-        onChangeText={setNewPassword}
-        secureTextEntry
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
 
       <TextInput
         style={styles.input}
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
         secureTextEntry
       />
 
       <TouchableOpacity 
-        style={styles.button} 
-        onPress={handleResetPassword}
+        style={styles.button}
+        onPress={handleSignUp}
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'Resetting...' : 'Reset Password'}
+          {loading ? 'Creating Account...' : 'Sign Up'}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.loginLink}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <Text style={styles.loginText}>
+          Already have an account? Login
         </Text>
       </TouchableOpacity>
     </View>
@@ -112,4 +117,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-}); 
+  loginLink: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  loginText: {
+    color: '#666',
+    fontSize: 14,
+  },
+});
+
+export default SignUpScreen; 

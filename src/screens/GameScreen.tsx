@@ -1,135 +1,191 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   Image,
+  TextInput,
+  SafeAreaView,
+  Dimensions,
 } from 'react-native';
-import ScreenWrapper from '../components/ScreenWrapper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
 const games = [
   {
     id: '1',
     title: 'ORION STARS',
+    subtitle: 'Tap the button below to Play',
     image: 'https://oriongames.net/wp-content/uploads/2022/04/LibraryHeroImage-1920x620.png',
+    playUrl: 'http://start.orionstars.vip:8580/index.html?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiIyODk0M2I5ZmMyZDk0MjI0MzU4YzI1NWFiZDFmMjdkZSIsInRzIjoxNzM2NjE3MTAyLCJleHAiOjE3MzkwMzYzMDJ9.CyBMJobAJJTpvpvx7Lo29afoede84AeKucNovNbhp44',
+    downloadUrl: 'https://orionstar.us/download',
   },
   {
     id: '2',
     title: 'FIRE KIRIN',
+    subtitle: 'Tap the button below to Play',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs73q_9baM_h0QX1WfckYymxwUFscsgDmDoA&s',
+    playUrl: 'http://firekirin.xyz:8580/index.html',
+    downloadUrl: 'https://firekirin.com/download',
   },
   {
     id: '3',
     title: 'GAME VAULT',
+    subtitle: 'Tap the button below to Play',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnARhUnAhl29QEtORTociKKfPU_ZvcVud6INF4mJ8LeoPXLE2ls6TDLfHb_kv71m0JKk0&usqp=CAU',
+    playUrl: 'http://gamevault.me:8580/index.html',
+    downloadUrl: 'https://gamevault.com/download',
   },
   {
     id: '4',
     title: 'VBLINK',
+    subtitle: 'Tap the button below to Play',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0bkKRMKvP3m1mXAb2rV1BOGUgioJMzc26DA&s',
+    playUrl: 'https://www.vblink777.club/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI2ZjM1YTM1OTU0N2MwOWZiYWMzOTUyNzI1NTBjNWNkZSIsInRzIjoxNzM2NjE3MjYwLCJleHAiOjE3MzkwMzY0NjB9.nj_PehGSp-e0OzFlAWBPztAp__N7gpiC6MfXb8n90zU',
+    downloadUrl: 'https://www.vblink777.club/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI2ZjM1YTM1OTU0N2MwOWZiYWMzOTUyNzI1NTBjNWNkZSIsInRzIjoxNzM2NjE3MjYwLCJleHAiOjE3MzkwMzY0NjB9.nj_PehGSp-e0OzFlAWBPztAp__N7gpiC6MfXb8n90zU',
   },
   {
     id: '5',
-    title: 'ORION STARS',
+    title: 'VEGAS SWEEPS',
     image: 'https://oriongames.net/wp-content/uploads/2022/04/LibraryHeroImage-1920x620.png',
+    playUrl: 'https://m.lasvegassweeps.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlOTk2NmUxN2I3OWUzZDRkNTE2YTg3ZWYyMjNjOThhYSIsInRzIjoxNzM2NjE3MjY4LCJleHAiOjE3MzkwMzY0Njh9.iEW-Ggq0J91GkBjo6v9F7SXrtFvvZDJTOlzGlaP_bH0',
+    downloadUrl: 'https://m.lasvegassweeps.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlOTk2NmUxN2I3OWUzZDRkNTE2YTg3ZWYyMjNjOThhYSIsInRzIjoxNzM2NjE3MjY4LCJleHAiOjE3MzkwMzY0Njh9.iEW-Ggq0J91GkBjo6v9F7SXrtFvvZDJTOlzGlaP_bH0',
   },
   {
     id: '6',
-    title: 'FIRE KIRIN',
+    title: 'ULTRA PANDA',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs73q_9baM_h0QX1WfckYymxwUFscsgDmDoA&s',
+    playUrl: 'https://www.ultrapanda.mobi/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlNTY4ZGU1NjQ0Mzk2YTdmNDJmOTNkMDMzOWI4MWY1ZiIsInRzIjoxNzM2NjE3MzE0LCJleHAiOjE3MzkwMzY1MTR9.mimtqc1NXVfw_95AjcSMCx5eChPduL6XSybpH_5gIIY',
+    downloadUrl: 'https://www.ultrapanda.mobi/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlNTY4ZGU1NjQ0Mzk2YTdmNDJmOTNkMDMzOWI4MWY1ZiIsInRzIjoxNzM2NjE3MzE0LCJleHAiOjE3MzkwMzY1MTR9.mimtqc1NXVfw_95AjcSMCx5eChPduL6XSybpH_5gIIY',
   },
   {
     id: '7',
-    title: 'GAME VAULT',
+    title: 'YOLO',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnARhUnAhl29QEtORTociKKfPU_ZvcVud6INF4mJ8LeoPXLE2ls6TDLfHb_kv71m0JKk0&usqp=CAU',
+    playUrl: 'https://yolo777.game/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiIxYTM2YjZlNzNlOTI3Mjc2MGJkYjczNGZmNmUxNGM3MCIsInRzIjoxNzM2NjE3MzIzLCJleHAiOjE3MzkwMzY1MjN9.MxukMgfbJNPTp4pFw60G1eRTxXre3p-UyqzP16_lwH4',
+    downloadUrl: 'https://yolo777.game/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiIxYTM2YjZlNzNlOTI3Mjc2MGJkYjczNGZmNmUxNGM3MCIsInRzIjoxNzM2NjE3MzIzLCJleHAiOjE3MzkwMzY1MjN9.MxukMgfbJNPTp4pFw60G1eRTxXre3p-UyqzP16_lwH4',
   },
   {
     id: '8',
-    title: 'VBLINK',
+    title: 'JUWA',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0bkKRMKvP3m1mXAb2rV1BOGUgioJMzc26DA&s',
+    playUrl: 'https://dl.juwa777.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJmNTgxMmMyMGMwN2QxNmU0NWIzNzc3NmY2ZjdhNDc2MCIsInRzIjoxNzM2NjE3MzMyLCJleHAiOjE3MzkwMzY1MzJ9.dXadE4vmGW2OMQZfVGzv1LLvNgqJg-Dt8lBms5RtT0Y',
+    downloadUrl: 'https://dl.juwa777.com/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJmNTgxMmMyMGMwN2QxNmU0NWIzNzc3NmY2ZjdhNDc2MCIsInRzIjoxNzM2NjE3MzMyLCJleHAiOjE3MzkwMzY1MzJ9.dXadE4vmGW2OMQZfVGzv1LLvNgqJg-Dt8lBms5RtT0Y',
+  },
+  {
+    id: '9',
+    title: 'MOOLAH',
+    image: 'https://oriongames.net/wp-content/uploads/2022/04/LibraryHeroImage-1920x620.png',
+    playUrl: 'https://moolah.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlYmNkYjAxODRlNGRkZTFlNjE2MTY3MGM2OGU4ZDRkYSIsInRzIjoxNzM2NjE3MzQzLCJleHAiOjE3MzkwMzY1NDN9.lLL29uBM7RKR_dkh7L_D3N3_z0nT9lnEdcSKr3m8IQE',
+    downloadUrl: 'https://moolah.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiJlYmNkYjAxODRlNGRkZTFlNjE2MTY3MGM2OGU4ZDRkYSIsInRzIjoxNzM2NjE3MzQzLCJleHAiOjE3MzkwMzY1NDN9.lLL29uBM7RKR_dkh7L_D3N3_z0nT9lnEdcSKr3m8IQE',
+  },
+  {
+    id: '10',
+    title: 'PANDA MASTER',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs73q_9baM_h0QX1WfckYymxwUFscsgDmDoA&s',
+    playUrl: 'https://pandamaster.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI5Yjk3YTJhZTZmNGUxZTk3NDRiNjlhNzIwOTg5ZTc5ZiIsInRzIjoxNzM2NjE3MzU0LCJleHAiOjE3MzkwMzY1NTR9.zGYOqC1o5aLAnJ6cWU-ELt6FGAyWksA1We25gQ5k96Q',
+    downloadUrl: 'https://pandamaster.vip:8888/?mcp_token=eyJwaWQiOjM5ODc3OTQ5NjY1NTMzMCwic2lkIjoyODExNjI0NDgwMTMyNDYxOSwiYXgiOiI5Yjk3YTJhZTZmNGUxZTk3NDRiNjlhNzIwOTg5ZTc5ZiIsInRzIjoxNzM2NjE3MzU0LCJleHAiOjE3MzkwMzY1NTR9.zGYOqC1o5aLAnJ6cWU-ELt6FGAyWksA1We25gQ5k96Q',
   },
 ];
 
-const GameScreen = () => {
-  return (
-    <ScreenWrapper>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Games</Text>
-        </View>
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-        {/* Search Bar */}
+const GameScreen = () => {
+  const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleStoreLink = (url: string) => {
+    navigation.navigate('WebView', { url });
+  };
+
+  const filteredGames = games.filter(game =>
+    game.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header with Profile Icon */}
+      <View style={styles.header}>
         <View style={styles.searchContainer}>
+          <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search games"
-            placeholderTextColor="#999"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
         </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
 
-        {/* Games Grid */}
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.gamesGrid}>
-            {games.map((game) => (
-              <View key={game.id} style={styles.gameCard}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: game.image }}
-                    style={styles.gameImage}
-                    resizeMode="cover"
-                  />
-                </View>
-                <Text style={styles.gameTitle}>{game.title}</Text>
-                <Text style={styles.subtitle}>Tap the button below to Play</Text>
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity style={styles.playButton}>
-                    <Text style={styles.buttonText}>Play</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.downloadButton}>
-                    <Text style={styles.buttonText}>Download</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-          </View>
-        </ScrollView>
+        <Image 
+          source={{ uri: 'https://ui-avatars.com/api/?name=JD&background=4CAF50&color=fff' }}
+          style={styles.profileIcon}
+          />
+          </TouchableOpacity>
       </View>
-    </ScreenWrapper>
+
+      {/* Games Grid */}
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.gamesGrid}>
+          {filteredGames.map((game) => (
+            <View key={game.id} style={styles.gameCard}>
+              <Image source={{ uri: game.image }} style={styles.gameImage} />
+              <Text style={styles.gameTitle}>{game.title}</Text>
+              <Text style={styles.subtitle}>{game.subtitle}</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.playButton}
+                  onPress={() => handleStoreLink(game.playUrl)}
+                >
+                  <Text style={styles.buttonText}>Play</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </View>
+        <View style={{paddingBottom:80}}></View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    padding: 16,
+    gap: 12,
   },
   searchContainer: {
-    padding: 16,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 25,
+    paddingHorizontal: 12,
+  },
+  searchIcon: {
+    marginRight: 8,
   },
   searchInput: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 12,
+    flex: 1,
+    height: 40,
     fontSize: 16,
   },
+  profileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
   scrollView: {
-    flex: 1,
+    height: SCREEN_HEIGHT * 0.7,
+    backgroundColor: 'white',
   },
   gamesGrid: {
     padding: 16,
@@ -139,65 +195,46 @@ const styles = StyleSheet.create({
   },
   gameCard: {
     width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    marginBottom: 16,
-    padding: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-  },
-  imageContainer: {
-    aspectRatio: 1,
-    width: '100%',
-    marginBottom: 12,
+    backgroundColor: 'white',
     borderRadius: 12,
+    marginBottom: 16,
     overflow: 'hidden',
-    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   gameImage: {
     width: '100%',
-    height: '100%',
+    height: 120,
+    resizeMode: 'cover',
   },
   gameTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    marginTop: 8,
     marginBottom: 4,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 12,
+    textAlign: 'center',
+    marginBottom: 8,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    padding: 8,
+    width: '100%',
   },
   playButton: {
-    backgroundColor: '#000000',
+    backgroundColor: 'black',
     borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    flex: 1,
-    marginRight: 4,
-  },
-  downloadButton: {
-    backgroundColor: '#000000',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    flex: 1,
-    marginLeft: 4,
+    padding: 12,
+    alignItems: 'center',
+    width: '100%',
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    textAlign: 'center',
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
 

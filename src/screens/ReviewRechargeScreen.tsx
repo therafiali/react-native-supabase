@@ -23,7 +23,7 @@ type RootStackParamList = {
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'MainTabs'>;
 
-const ReviewRequestScreen = () => {
+const ReviewRechargeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const { username, amount, platform } = route.params as RouteParams;
@@ -35,7 +35,7 @@ const ReviewRequestScreen = () => {
       case 'cashapp': return 'CashApp';
       case 'chime': return 'Chime';
       case 'venmo': return 'Venmo';
-      default: return method;
+      default: return method; 
     }
   };
 
@@ -72,22 +72,22 @@ const ReviewRequestScreen = () => {
 
         <View style={styles.content}>
           <Text style={styles.description}>
-            Please review your Redeem request
+          Payment Link only valid for 10 minutes.
           </Text>
 
-          <View style={styles.detailsContainer}>
+          {/* <View style={styles.detailsContainer}>
             <Text style={styles.detailText}>Username: {username}</Text>
             <Text style={styles.detailText}>Amount: ${amount}</Text>
-            <Text style={styles.detailText}>Platform: {platform}</Text>
-            {/* {paymentDetails?.map((detail, index) => (
+            {paymentDetails?.map((detail, index) => (
               <Text key={index} style={styles.detailText}>
                 {getMethodDisplayName(detail.method)}: {detail.id}
               </Text>
-            ))} */}
-          </View>
+            ))}
+          </View> */}
 
+       
           <Text style={styles.confirmText}>
-            Is all the information correct?
+          Payment Process:-Button links redirects to the relevant payment method.-Simply Pay, Screenshot, and Submit the screenshot within 10 mins. Screenshots Submission:- Make sure that Names, Identifier, Date & Time are clearly visible. Fake Screenshots = Permanent Blacklist!
           </Text>
 
           <View style={styles.buttonContainer}>
@@ -133,7 +133,7 @@ const ReviewRequestScreen = () => {
                   style={styles.doneButton}
                   onPress={handleDone}
                 >
-                  <Text style={styles.doneButtonText}>Payment Button</Text>
+                  <Text style={styles.doneButtonText}>Done</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -171,9 +171,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
-    alignItems: 'center',
-    gap: 20,
-    marginTop: 60,
   },
   description: {
     fontSize: 16,
@@ -182,28 +179,21 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginBottom: 40,
-    textAlign: 'center',
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
   },
   detailText: {
-    fontSize: 25,
+    fontSize: 16,
     marginBottom: 10,
     color: '#000',
   },
   confirmText: {
-    fontSize: 20  ,
+    fontSize: 16,
     color: '#000',
     marginBottom: 20,
-    marginTop: 40,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 15,
-    marginTop: 40,
   },
   button: {
     flex: 1,
@@ -268,4 +258,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReviewRequestScreen; 
+export default ReviewRechargeScreen; 

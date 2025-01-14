@@ -21,6 +21,7 @@ type RootStackParamList = {
   ResetPassword: undefined;
   AccountSettings: undefined;
   Login: undefined;
+  WebView: { url: string };
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -67,6 +68,10 @@ const ProfileScreen = () => {
     } else if (title === 'Logout') {
       handleLogout();
     }
+  };
+
+  const handleStoreLink = (url: string) => {
+    navigation.navigate('WebView', { url });
   };
 
   const MENU_ITEMS = [
@@ -142,6 +147,8 @@ const ProfileScreen = () => {
           </React.Fragment>
         ))}
       </View>
+
+     
     </SafeAreaView>
   );
 };
@@ -211,6 +218,19 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#EEEEEE',
+  },
+  section: {
+    marginTop: 16,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  menuText: {
+    flex: 1,
+    marginLeft: 16,
+    fontSize: 16,
+    color: '#333',
   },
 });
 

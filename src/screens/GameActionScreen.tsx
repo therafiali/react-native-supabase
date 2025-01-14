@@ -39,12 +39,12 @@ const GameActionScreen = () => {
 
   const handleRecharge = () => {
     const numAmount = parseFloat(amount);
-    if (numAmount < 30) {
-      setError('Amount must be at least $30');
-      Alert.alert('Invalid Amount', 'Amount must be at least $30');
+    if (numAmount < 10) {
+      setError('Amount must be at least $10');
+      Alert.alert('Invalid Amount', 'Amount must be at least $10');
     } else {
       setError('');
-      navigation.navigate('SelectPlatform');
+      navigation.navigate('Promocode');
     }
   };
 

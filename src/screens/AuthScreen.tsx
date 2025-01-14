@@ -8,37 +8,54 @@ import {
   Alert,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// Define your navigation types
+type AuthStackParamList = {
+  Login: undefined;
+  SignUp: undefined;
+  ForgotPassword: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 export const AuthScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(true);
-  const { signIn, signUp } = useAuth();
+  const navigation = useNavigation<NavigationProp>();
+  const { signIn } = useAuth();
 
-  const handleAuth = async () => {
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
     try {
-      if (isLogin) {
-        await signIn(email, password);
-      } else {
-        await signUp(email, password);
-        Alert.alert('Success', 'Please check your email for verification');
-      }
+      await signIn(email, password);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'An error occurred');
     }
   };
 
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPassword');
+  };
+
+  const handleNavigateToSignUp = () => {
+    navigation.navigate('SignUp');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{isLogin ? 'Login' : 'Sign Up'}</Text>
-      
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        autoCapitalize="none"
         keyboardType="email-address"
+        autoCapitalize="none"
       />
       
       <TextInput
@@ -49,15 +66,17 @@ export const AuthScreen = () => {
         secureTextEntry
       />
       
-      <TouchableOpacity style={styles.button} onPress={handleAuth}>
-        <Text style={styles.buttonText}>
-          {isLogin ? 'Login' : 'Sign Up'}
-        </Text>
+      <TouchableOpacity onPress={handleForgotPassword}>
+        <Text style={styles.forgotPassword}>Forgot Password?</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+      <TouchableOpacity onPress={handleNavigateToSignUp}>
         <Text style={styles.switchText}>
-          {isLogin ? 'Need an account? Sign Up' : 'Have an account? Login'}
+          Need an account? Sign Up
         </Text>
       </TouchableOpacity>
     </View>
@@ -67,40 +86,36 @@ export const AuthScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    justifyContent: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
     padding: 10,
-    fontSize: 16,
-    borderRadius: 6,
-    marginBottom: 10,
+    marginBottom: 20,
+    borderRadius: 5,
   },
   button: {
-    backgroundColor: '#000',
+    backgroundColor: '#007AFF',
     padding: 15,
-    borderRadius: 6,
-    marginBottom: 10,
+    borderRadius: 5,
+    marginBottom: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: 'white',
     textAlign: 'center',
-    fontSize: 16,
     fontWeight: 'bold',
   },
+  forgotPassword: {
+    color: '#007AFF',
+    textAlign: 'right',
+    fontSize: 14,
+    marginBottom: 20,
+  },
   switchText: {
-    color: '#000',
+    color: '#007AFF',
     textAlign: 'center',
     fontSize: 14,
-    marginTop: 10,
   },
 }); 

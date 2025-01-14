@@ -7,13 +7,16 @@ import { supabase } from '../lib/supabase';
 
 type RootStackParamList = {
   EnterAmount: undefined;
+  RemainingLimit: undefined;
+  CheckStatus: undefined;
+  VIPCode: undefined;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EnterAmount'>;
 
 const ICONS = {
-  deposit: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM0NjMwRUIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI0IiB3aWR0aD0iMTgiIGhlaWdodD0iMTYiIHJ4PSIyIi8+PHBhdGggZD0iTTggMTJoOE0xMiA4djgiLz48L3N2Zz4=',
-  withdraw: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM0NjMwRUIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI0IiB3aWR0aD0iMTgiIGhlaWdodD0iMTYiIHJ4PSIyIi8+PHBhdGggZD0iTTggMTJoOCIvPjwvc3ZnPg=='
+  deposit: 'data:image/svg+xml;base64,...', // Replace with your base64 SVG
+  withdraw: 'data:image/svg+xml;base64,...', // Replace with your base64 SVG
 };
 
 const HomeScreen = () => {
@@ -28,10 +31,7 @@ const HomeScreen = () => {
   const fetchUserBalance = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      console.log('Current auth user:', user);
-
       if (!user) {
-        console.log('No authenticated user found');
         setIsLoading(false);
         return;
       }
@@ -41,18 +41,13 @@ const HomeScreen = () => {
         .select('deposit_balance')
         .single();
 
-      console.log('User balance data:', userData);
-
       if (error) {
-        console.error('Error fetching balance:', error);
         throw error;
       }
 
-      if (userData) {
-        setBalance(userData.deposit_balance || 0);
-      }
+      setBalance(userData?.deposit_balance || 0);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching balance:', error);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +59,7 @@ const HomeScreen = () => {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Wallet</Text>
         </View>
-        
+
         <View style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>Account balance</Text>
           {isLoading ? (
@@ -73,7 +68,6 @@ const HomeScreen = () => {
             <Text style={styles.balanceAmount}>${balance?.toFixed(2) || '0.00'}</Text>
           )}
         </View>
-
         <View style={styles.actionsContainer}>
           <TouchableOpacity style={styles.actionButton}>
             <Image 
@@ -94,6 +88,28 @@ const HomeScreen = () => {
             />
             <Text style={styles.actionText}>Withdraw</Text>
             <Text style={styles.arrow}>→</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => navigation.navigate('RemainingLimit')}
+          >
+            <Text style={styles.actionText}>Remaining Limit</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => navigation.navigate('CheckStatus')}
+          >
+            <Text style={styles.actionText}>Check Status</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => navigation.navigate('VIPCode')}
+          >
+            <Text style={styles.actionText}>VIP Code</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -123,10 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginTop: 20,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
@@ -143,36 +156,32 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
     marginTop: 20,
     gap: 15,
   },
   actionButton: {
-    flex: 1,
     backgroundColor: '#FFFFFF',
     padding: 20,
     borderRadius: 15,
-    alignItems: 'flex-start',
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
+  actionText: {
+    fontSize: 16,
+    color: '#000000',
+  },
+
   actionIcon: {
     width: 40,
     height: 40,
     marginBottom: 10,
   },
-  actionText: {
-    fontSize: 16,
-    color: '#000000',
-    marginTop: 5,
-  },
+
   arrow: {
     position: 'absolute',
     right: 15,
@@ -182,4 +191,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen; 
+export default HomeScreen;

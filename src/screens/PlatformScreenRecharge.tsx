@@ -13,11 +13,10 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ScreenWrapper from '../components/ScreenWrapper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const { width, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.35;
+const CARD_HEIGHT = height * 0.35;
 const SPACING = 16;
 
 type RootStackParamList = {
@@ -59,30 +58,15 @@ const platforms = [
   },
 ];
 
-
-
 const SelectPlatformScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [searchQuery, setSearchQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [username, setUsername] = useState('');
   const [selectedGameName, setSelectedGameName] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // Add filtered platforms logic
-  const filteredPlatforms = platforms.filter(platform =>
-    platform.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Reset active index when search changes
-  useEffect(() => {
-    setActiveIndex(0);
-    console.log(searchQuery);
-  }, [searchQuery]);
-
   const handleScroll = (event: any) => {
-
     const scrollPosition = event.nativeEvent.contentOffset.x;
     const index = Math.round(scrollPosition / (CARD_WIDTH + SPACING));
     setActiveIndex(index);
@@ -120,31 +104,18 @@ const SelectPlatformScreen = () => {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        {/* Header with Search */}
+        {/* Header */}
         <View style={styles.header}>
-          <View style={styles.searchContainer}>
-            <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search games..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholderTextColor="#999"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Icon name="close" size={20} color="#666" style={styles.searchIcon} />
-              </TouchableOpacity>
-            )}
-          </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-            <Image 
-              source={{ uri: 'https://ui-avatars.com/api/?name=JD&background=4CAF50&color=fff' }}
-              style={styles.profileIcon}
-            />
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
+          <Text style={styles.headerTitle}>Select Platform</Text>
+          <View style={styles.profileBadge}>
+            <Text style={styles.profileText}>JD</Text>
+          </View>
         </View>
 
         {/* Platforms Carousel */}
@@ -159,7 +130,7 @@ const SelectPlatformScreen = () => {
             snapToInterval={CARD_WIDTH + SPACING}
             decelerationRate="fast"
           >
-            {filteredPlatforms.map((platform) => (
+            {platforms.map((platform) => (
               <TouchableOpacity
                 key={platform.id}
                 onPress={() => handleGameSelect(platform.id)}
@@ -183,7 +154,7 @@ const SelectPlatformScreen = () => {
 
           {/* Pagination Dots */}
           <View style={styles.pagination}>
-            {filteredPlatforms.map((_, index) => (
+            {platforms.map((_, index) => (
               <View
                 key={index}
                 style={[
@@ -224,6 +195,7 @@ const SelectPlatformScreen = () => {
           </TouchableOpacity>
         </View>
 
+
         {/* Confirmation Modal */}
         <Modal
           visible={showConfirmModal}
@@ -260,7 +232,6 @@ const SelectPlatformScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -278,33 +249,6 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  searchContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 25,
-    paddingHorizontal: 12,
-    marginRight: 12,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-    color: '#000',
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  scrollView: {
-    height: SCREEN_HEIGHT * 0.7,
-    backgroundColor: 'white',
   },
   backButtonText: {
     fontSize: 24,

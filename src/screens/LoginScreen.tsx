@@ -37,7 +37,8 @@ const LoginScreen = () => {
         <View style={styles.content}>
           {/* Logo or App Name */}
           <View style={styles.logoContainer}>
-            <Text style={styles.appName}>Your App Name</Text>
+            <Icon name="gamepad-variant" size={80} color="#0066FF" style={styles.logo} />
+            <Text style={styles.appName}>Power House Gaming</Text>
             <Text style={styles.welcomeText}>Welcome back!</Text>
           </View>
 
@@ -76,7 +77,10 @@ const LoginScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword}>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate('ForgotPassword')}
+              style={styles.forgotPassword}
+            >
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
 
@@ -88,7 +92,7 @@ const LoginScreen = () => {
           {/* Sign Up Link */}
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don't have an account? </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
               <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -115,9 +119,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
+  logo: {
+    marginBottom: 16,
+  },
   appName: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#0066FF',
     marginBottom: 8,
   },
   welcomeText: {
