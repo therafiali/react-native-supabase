@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
   },
   header: {
     flexDirection: 'row',
@@ -217,6 +217,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
     marginTop: 8,
+    paddingHorizontal: 16,
+
   },
   headerText: {
     fontSize: 20,
