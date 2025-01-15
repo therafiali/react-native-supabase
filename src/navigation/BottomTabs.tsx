@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Platform, Dimensions } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import HomeScreen from '../screens/HomeScreen';
 import GameScreen from '../screens/GameScreen';
 import GameActionScreen from '../screens/GameActionScreen';
@@ -40,8 +41,8 @@ const BottomTabs = () => {
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={[styles.tabItem, focused && styles.tabItemActive]}>
-              <Icon 
-                name="apps"
+              <Ionicons 
+                name="game-controller"
                 size={24}
                 color={focused ? '#000000' : '#757575'}
               />
