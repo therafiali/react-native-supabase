@@ -28,7 +28,7 @@ const paymentMethods = [
   { 
     id: 'chime', 
     name: 'Chime', 
-    icon: 'https://img.icons8.com/ios-filled/50/40C057/chime.png',
+    icon: 'https://img.icons8.com/?size=512&id=mNhj6ePnTBkQ&format=png',
     placeholder: 'Enter ChimeSign'
   },
   { 
@@ -54,7 +54,7 @@ const PaymentMethodsScreen = () => {
   };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper profileBar={false}>
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity 
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   methodsContainer: {

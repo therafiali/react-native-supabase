@@ -53,7 +53,7 @@ const EnterAmountScreen = () => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
@@ -115,7 +115,7 @@ const EnterAmountScreen = () => {
         </View>
 
         {/* Continue Button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.continueButton}
           onPress={handleContinue}
         >
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   description: {
@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: '90%',
     marginBottom: 20,
+    bottom: 50,
   },
   continueButtonText: {
     color: '#FFFFFF',

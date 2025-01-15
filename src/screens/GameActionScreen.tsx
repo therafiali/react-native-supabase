@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   userContainer: {

@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E9ECEF',
   },
   headerTitle: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: '700',
     color: '#212529',
   },
