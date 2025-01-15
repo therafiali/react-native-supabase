@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,44 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+type NotificationType = {
+  id: string;
+  type: string;
+  amount?: string;
+  date: string;
+  status?: string;
+  game?: string;
+  message?: string;
+  isPinned?: boolean;
+};
+
+type WalletNotification = NotificationType & {
+  type: 'Deposit' | 'Withdrawal';
+  amount: string;
+  status: string;
+};
+
+type GameNotification = NotificationType & {
+  game: string;
+  message: string;
+  type: string;
+  isPinned?: boolean;
+  title?: string;
+};
 
 const NotificationScreen = () => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState('Wallet');
+  const route = useRoute();
+  const routeParams = route.params as { activeTab?: string; notification?: GameNotification };
+  const [activeTab, setActiveTab] = useState(routeParams?.activeTab || 'Wallet');
 
-  const notifications = {
+  const [notifications, setNotifications] = useState<{
+    Wallet: WalletNotification[];
+    Games: GameNotification[];
+    Current: GameNotification[];
+  }>({
     Wallet: [
       {
         id: '1',
@@ -34,20 +65,42 @@ const NotificationScreen = () => {
     Games: [
       {
         id: '3',
+        type: 'game_update',
         game: 'ORION STARS',
         message: 'Won 500 points!',
         date: '2024-02-20 15:45',
       },
       {
         id: '4',
+        type: 'game_update',
         game: 'FIRE KIRIN',
         message: 'New level unlocked',
         date: '2024-02-19 09:15',
       },
     ],
-  };
+    Current: [],
+  });
 
-  const renderWalletNotification = (item) => (
+  // Handle new notification from route params
+  useEffect(() => {
+    if (routeParams?.notification) {
+      const newNotification: GameNotification = {
+        id: Date.now().toString(),
+        type: routeParams.notification.type,
+        game: routeParams.notification.title || 'Game Update',
+        message: routeParams.notification.message,
+        date: new Date().toLocaleString(),
+        isPinned: routeParams.notification.isPinned,
+      };
+
+      setNotifications(prev => ({
+        ...prev,
+        Current: [newNotification, ...prev.Current],
+      }));
+    }
+  }, [routeParams?.notification]);
+
+  const renderWalletNotification = (item: WalletNotification) => (
     <View key={item.id} style={styles.notificationItem}>
       <View style={styles.notificationContent}>
         <Text style={styles.notificationType}>{item.type}</Text>
@@ -66,9 +119,17 @@ const NotificationScreen = () => {
     </View>
   );
 
-  const renderGameNotification = (item) => (
-    <View key={item.id} style={styles.notificationItem}>
+  const renderGameNotification = (item: GameNotification) => (
+    <View key={item.id} style={[
+      styles.notificationItem,
+      item.isPinned && styles.pinnedNotification
+    ]}>
       <View style={styles.notificationContent}>
+        {item.isPinned && (
+          <View style={styles.pinnedBadge}>
+            <Text style={styles.pinnedText}>Pinned</Text>
+          </View>
+        )}
         <Text style={styles.gameName}>{item.game}</Text>
         <Text style={styles.message}>{item.message}</Text>
         <Text style={styles.date}>{item.date}</Text>
@@ -80,10 +141,10 @@ const NotificationScreen = () => {
     <View style={styles.container}>
       {/* Header with Profile */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Text style={styles.headerTitle}>Transactions</Text>
         <TouchableOpacity 
           style={styles.profileButton}
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('Profile' as never)}
         >
           <Image
             source={{ uri: 'https://ui-avatars.com/api/?name=John+Doe&background=4CAF50&color=fff&size=128' }}
@@ -110,14 +171,21 @@ const NotificationScreen = () => {
             Games
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'Current' && styles.activeTab]}
+          onPress={() => setActiveTab('Current')}
+        >
+          <Text style={[styles.tabText, activeTab === 'Current' && styles.activeTabText]}>
+            Current
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Notifications List */}
       <ScrollView style={styles.notificationList}>
-        {activeTab === 'Wallet'
-          ? notifications.Wallet.map(renderWalletNotification)
-          : notifications.Games.map(renderGameNotification)
-        }
+        {activeTab === 'Wallet' && notifications.Wallet.map(renderWalletNotification)}
+        {activeTab === 'Games' && notifications.Games.map(renderGameNotification)}
+        {activeTab === 'Current' && notifications.Current.map(renderGameNotification)}
       </ScrollView>
     </View>
   );
@@ -184,6 +252,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     borderRadius: 12,
     marginBottom: 12,
+  },
+  pinnedNotification: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#22C55E',
+  },
+  pinnedBadge: {
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  pinnedText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   notificationContent: {
     flex: 1,

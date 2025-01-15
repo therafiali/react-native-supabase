@@ -22,14 +22,48 @@ import CheckStatusScreen from '../screens/CheckStatusScreen';
 import VIPCodeScreen from '../screens/VIPCodeScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import WebViewScreen from '../screens/WebViewScreen';
-import EnterPromocodeScreen from '../screens/EnterPromocodeScreen';
 import PlatformScreenRecharge from '../screens/PlatformScreenRecharge';
 import UsernameRecharge from '../screens/UsernameRecharge';
 import ReviewRechargeScreen from '../screens/ReviewRechargeScreen';
 import PaymentMethodDeposit from '../screens/PaymentMethodDeposit';
 import AmountDepositScreen from '../screens/AmountDepositScreen';
 import NotificationScreen from '../screens/NotificationScreen';
-const Stack = createStackNavigator();
+
+export type RootStackParamList = {
+  Login: undefined;
+  SignUp: undefined;
+  MainTabs: undefined;
+  Profile: undefined;
+  ReferralCode: undefined;
+  Feedback: undefined;
+  Promotions: undefined;
+  ResetPassword: undefined;
+  AccountSettings: undefined;
+  SelectPlatform: undefined;
+  EnterUsername: undefined;
+  PaymentMethods: undefined;
+  PaymentDetails: undefined;
+  ReviewRequest: undefined;
+  EnterAmount: undefined;
+  WebView: undefined;
+  PaymentMethodDeposit: undefined;
+  OtpScreen: undefined;
+  RemainingLimit: undefined;
+  CheckStatus: undefined;
+  VIPCode: undefined;
+  PlatformScreenRecharge: undefined;
+  UsernameRecharge: undefined;
+  ReviewRechargeScreen: {
+    platform: string;
+    username: string;
+    amount: string;
+  };
+  AmountDepositScreen: undefined;
+  NotificationScreen: undefined;
+  ForgotPassword: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   return (
@@ -57,7 +91,6 @@ const AppNavigator = () => {
       <Stack.Screen name="RemainingLimit" component={RemainingLimitScreen} />
       <Stack.Screen name="CheckStatus" component={CheckStatusScreen} />
       <Stack.Screen name="VIPCode" component={VIPCodeScreen} />
-      <Stack.Screen name="Promocode" component={EnterPromocodeScreen} />
       <Stack.Screen name="PlatformScreenRecharge" component={PlatformScreenRecharge} />
       <Stack.Screen name="UsernameRecharge" component={UsernameRecharge} />
       <Stack.Screen name="ReviewRechargeScreen" component={ReviewRechargeScreen} />

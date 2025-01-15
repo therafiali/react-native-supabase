@@ -22,13 +22,28 @@ type RouteParams = {
   platform: string;
 };
 
+type NotificationParams = {
+  activeTab: string;
+  notification: {
+    type: string;
+    title: string;
+    message: string;
+    timestamp: string;
+    isPinned: boolean;
+    status: string;
+  };
+};
+
 type RootStackParamList = {
-  MainTabs: { screen: string };
+  MainTabs: {
+    screen: string;
+    params?: NotificationParams;
+  };
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'MainTabs'>;
 
-const ReviewRequestScreen = () => {
+const ReviewRechargeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const { username, amount, platform } = route.params as RouteParams;
@@ -58,8 +73,21 @@ const ReviewRequestScreen = () => {
   };
 
   const handleDone = () => {
-    // Navigate to MainTabs and set initial screen to wallet
-    navigation.navigate('MainTabs', { screen: 'Wallet' });
+    // Navigate to MainTabs, set initial screen to Notifications with Current tab active
+    navigation.navigate('MainTabs', { 
+      screen: 'Notifications',
+      params: {
+        activeTab: 'Current',
+        notification: {
+          type: 'recharge_request',
+          title: 'Recharge Request Submitted',
+          message: `Your recharge request for ${platform} (${username}) of $${amount} has been submitted successfully.`,
+          timestamp: new Date().toISOString(),
+          isPinned: true,
+          status: 'pending'
+        }
+      }
+    });
   };
 
   return (
@@ -451,4 +479,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReviewRequestScreen; 
+export default ReviewRechargeScreen; 
