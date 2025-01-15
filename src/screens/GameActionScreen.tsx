@@ -234,9 +234,9 @@ const styles = StyleSheet.create({
   rechargeButton: {
     flex: 1,
     fontSize: 18,
-    backgroundColor: '#00C853',
+    backgroundColor: '#000',
     padding: 16,
-    borderRadius: 30,
+    borderRadius: 10,
     marginRight: 8,
     elevation: 2,
     shadowColor: '#000',
@@ -249,9 +249,9 @@ const styles = StyleSheet.create({
   },
   redeemButton: {
     flex: 1,
-    backgroundColor: '#00C853',
+    backgroundColor: '#000',
     padding: 16,
-    borderRadius: 30,
+    borderRadius: 10,
     marginLeft: 8,
     elevation: 2,
     shadowColor: '#000',
