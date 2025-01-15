@@ -174,7 +174,7 @@ const SelectPlatformScreen = () => {
   };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper profileBar={false}>
       <View style={styles.container}>
         {/* Header with Search */}
         <View style={styles.header}>
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   headergameTitle: {

@@ -182,7 +182,7 @@ const PlatformScreenRecharge = () => {
   };
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper profileBar={false}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1, backgroundColor: '#FFFFFF' }}
