@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 const games = [
   {
@@ -106,47 +107,47 @@ const GameScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with Profile Icon */}
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
-          <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search games"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-
-        <Image 
-          source={{ uri: 'https://ui-avatars.com/api/?name=JD&background=4CAF50&color=fff' }}
-          style={styles.profileIcon}
-          />
-          </TouchableOpacity>
-      </View>
-
-      {/* Games Grid */}
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.gamesGrid}>
-          {filteredGames.map((game) => (
-            <View key={game.id} style={styles.gameCard}>
-              <Image source={{ uri: game.image }} style={styles.gameImage} />
-              <Text style={styles.gameTitle}>{game.title}</Text>
-              <Text style={styles.subtitle}>{game.subtitle}</Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={() => handleStoreLink(game.playUrl)}
-                >
-                  <Text style={styles.buttonText}>Play</Text>
-                </TouchableOpacity>
-              </View>
+      <ScreenWrapper>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Play Games</Text>
+          </View>
+          <View style={[styles.header,{bottom:10}]}>
+            <View style={styles.searchContainer}>
+              <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search games"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
             </View>
-          ))}
+
+          </View>
+
+          {/* Games Grid */}
+          <ScrollView style={[styles.scrollView,{bottom:10}]}>
+            <View style={[styles.gamesGrid]}>
+              {filteredGames.map((game) => (
+                <View key={game.id} style={styles.gameCard}>
+                  <Image source={{ uri: game.image }} style={styles.gameImage} />
+                  <Text style={styles.gameTitle}>{game.title}</Text>
+                  <Text style={styles.subtitle}>{game.subtitle}</Text>
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                      style={styles.playButton}
+                      onPress={() => handleStoreLink(game.playUrl)}
+                    >
+                      <Text style={styles.buttonText}>Play</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+            <View style={{ paddingBottom: 80 }}></View>
+          </ScrollView>
         </View>
-        <View style={{paddingBottom:80}}></View>
-      </ScrollView>
+      </ScreenWrapper>
     </SafeAreaView>
   );
 };
@@ -169,6 +170,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderRadius: 25,
     paddingHorizontal: 12,
+    // marginTop: 12,
+
   },
   searchIcon: {
     marginRight: 8,
@@ -235,6 +238,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: '500',
+  },
+  headerText: {
+    fontSize: 20,
+    color: 'black',
+    paddingVertical: 10,
+    fontWeight: 'bold',
+  },
+  routingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 4,
   },
 });
 
