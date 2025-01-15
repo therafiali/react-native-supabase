@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,6 +15,67 @@ type RootStackParamList = {
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EnterAmount'>;
+
+type GridItem = {
+  id: string;
+  label: string;
+  content: string;
+  icon: string;
+  bgColor: string;
+  onPress?: keyof RootStackParamList;
+};
+
+const gridItems: GridItem[] = [
+  {
+    id: 'redeem',
+    label: 'Redeem Limits',
+    content: 'Available: $0.00',
+    icon: 'https://cdn-icons-png.flaticon.com/512/2845/2845886.png',
+    bgColor: '#E3F2FD',
+    onPress: 'RemainingLimit'
+  },
+  {
+    id: 'support',
+    label: 'Support',
+    content: '24/7 Live Chat',
+    icon: 'https://cdn-icons-png.flaticon.com/512/4233/4233839.png',
+    bgColor: '#E8F5E9',
+    onPress: 'LiveChat'
+
+  },
+  {
+    id: 'feedback',
+    label: 'Feedback',
+    content: 'Share your experience',
+    icon: 'https://cdn-icons-png.flaticon.com/512/2558/2558383.png',
+    bgColor: '#E0F2F1',
+    onPress: 'Feedback'
+  },
+  {
+    id: 'referrals',
+    label: 'Referrals',
+    content: 'Earn up to $50',
+    icon: 'https://cdn-icons-png.flaticon.com/512/1356/1356479.png',
+    bgColor: '#F3E5F5',
+    onPress: 'ReferralCode'
+  },
+  {
+    id: 'promotions',
+    label: 'Promotions',
+    content: 'View active offers',
+    icon: 'https://cdn-icons-png.flaticon.com/512/9332/9332625.png',
+    bgColor: '#E0F7FA',
+    onPress: 'Promotions'
+  },
+  {
+    id: 'transactions',
+    label: 'Transactions',
+    content: 'View history',
+    icon: 'https://cdn-icons-png.flaticon.com/512/1584/1584831.png',
+    bgColor: '#F3E5F5',
+    onPress: 'Notifications'
+  }
+];
 
 const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -54,8 +115,8 @@ const HomeScreen = () => {
         <View style={styles.header}>
           <Text style={styles.headerText}>Wallet</Text>
           <TouchableOpacity style={styles.routingButton}>
-           
-          
+
+
           </TouchableOpacity>
         </View>
 
@@ -67,14 +128,14 @@ const HomeScreen = () => {
             <Text style={styles.balanceAmount}>${balance?.toFixed(2) || '0.00'}</Text>
           )}
           <View style={styles.balanceActions}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.actionButton}
               onPress={() => navigation.navigate('AmountDepositScreen')}
             >
               <Icon name="plus" size={20} color="#000" style={styles.actionIcon} />
               <Text style={styles.actionButtonText}>Add Cash</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.actionButton}
               onPress={() => navigation.navigate('EnterAmount')}
             >
@@ -85,57 +146,28 @@ const HomeScreen = () => {
         </View>
 
         {/* Grid Items */}
+
         <View style={styles.gridContainer}>
-          <TouchableOpacity 
-            style={styles.gridItem}
-            onPress={() => navigation.navigate('RemainingLimit')}
-          >
-            <View style={[styles.iconContainer, { backgroundColor: '#E3F2FD' }]}>
-              <Icon name="bank-transfer" size={24} color="#2196F3" />
-            </View>
-            <Text style={styles.gridItemLabel}>Borrow</Text>
-            <Text style={styles.gridItemValue}>$0.00</Text>
-            <Text style={styles.gridItemSubtext}>Available</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.iconContainer, { backgroundColor: '#E8F5E9' }]}>
-              <Icon name="bank" size={24} color="#4CAF50" />
-            </View>
-            <Text style={styles.gridItemLabel}>Taxes</Text>
-            <Text style={styles.gridItemSubtext}>Pay $0 to file</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.iconContainer, { backgroundColor: '#E0F2F1' }]}>
-              <Icon name="piggy-bank" size={24} color="#009688" />
-            </View>
-            <Text style={styles.gridItemLabel}>Savings</Text>
-            <Text style={styles.gridItemSubtext}>Up to 4.5% interest</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.iconContainer, { backgroundColor: '#F3E5F5' }]}>
-              <Icon name="download" size={24} color="#9C27B0" />
-            </View>
-            <Text style={styles.gridItemLabel}>Paychecks</Text>
-            <Text style={styles.gridItemSubtext}>Get direct deposits early</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.iconContainer, { backgroundColor: '#E0F7FA' }]}>
-              <Icon name="bitcoin" size={24} color="#00BCD4" />
-            </View>
-            <Text style={styles.gridItemLabel}>Bitcoin</Text>
-            <Text style={styles.gridItemValue}>$526</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.iconContainer, { backgroundColor: '#F3E5F5' }]}>
-              <Icon name="chart-line" size={24} color="#9C27B0" />
-            </View>
-            <Text style={styles.gridItemLabel}>Stocks</Text>
-          </TouchableOpacity>
+          {gridItems.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.gridItem}
+              onPress={() => item.onPress && navigation.navigate(item.onPress)}
+            >
+              <View style={styles.gridItemHeader}>
+                <View style={[styles.iconContainer, { backgroundColor: item.bgColor }]}>
+                  <Image
+                    source={{ uri: item.icon }}
+                    style={styles.gridIcon}
+                  />
+                </View>
+                <Text style={styles.gridItemLabel}>
+                  {item.label}
+                </Text>
+              </View>
+              <Text style={styles.gridItemContent}>{item.content}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
     </ScreenWrapper>
@@ -147,6 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#FFFFFF',
+    paddingBottom: 85,
   },
   header: {
     flexDirection: 'row',
@@ -215,42 +248,50 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 12,
+    paddingBottom: 20,
+    marginTop: 8,
   },
   gridItem: {
     width: '48%',
     backgroundColor: '#FFFFFF',
-    padding: 16,
+    padding: 12,
     borderRadius: 16,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    marginBottom: 12,
+    height: 90,
+  },
+  gridItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginRight: 10,
+  },
+  gridIcon: {
+    width: 20,
+    height: 20,
   },
   gridItemLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  gridItemValue: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 2,
-  },
-  gridItemSubtext: {
     fontSize: 13,
-    color: '#666666',
+    fontWeight: '600',
+    color: '#000000',
+    flex: 1,
+  },
+  gridItemContent: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 4,
+    paddingLeft: 2,
   },
 });
 
