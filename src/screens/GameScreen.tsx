@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,20 @@ import {
   TextInput,
   SafeAreaView,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import ScreenWrapper from '../components/ScreenWrapper';
+
+type RootStackParamList = {
+  GameActionScreen: { url: string };
+  WebView: { url: string };
+  // ... other routes
+};
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const games = [
   {
@@ -94,16 +104,34 @@ const games = [
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const GameScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [gamesList, setGamesList] = useState(games);
 
   const handleStoreLink = (url: string) => {
     navigation.navigate('WebView', { url });
   };
 
-  const filteredGames = games.filter(game =>
+  const filteredGames = gamesList.filter(game =>
     game.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const refreshGames = () => {
+    // Reset the games list to simulate a refresh
+    setGamesList([]);
+    setTimeout(() => {
+      setGamesList(games);
+    }, 500);
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    refreshGames();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -126,7 +154,12 @@ const GameScreen = () => {
           </View>
 
           {/* Games Grid */}
-          <ScrollView style={[styles.scrollView,{bottom:10}]}>
+          <ScrollView
+            style={[styles.scrollView,{bottom:10}]}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             <View style={[styles.gamesGrid]}>
               {filteredGames.map((game) => (
                 <View key={game.id} style={styles.gameCard}>

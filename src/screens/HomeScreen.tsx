@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,6 +21,11 @@ type RootStackParamList = {
   RemainingLimit: undefined;
   CheckStatus: undefined;
   VIPCode: undefined;
+  LiveChat: undefined;
+  Feedback: undefined;
+  ReferralCode: undefined;
+  Promotions: undefined;
+  Notifications: undefined;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EnterAmount'>;
@@ -81,6 +95,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchUserBalance();
@@ -91,6 +106,7 @@ const HomeScreen = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setIsLoading(false);
+        setRefreshing(false);
         return;
       }
 
@@ -105,12 +121,23 @@ const HomeScreen = () => {
       console.error('Error fetching balance:', error);
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
   };
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchUserBalance();
+  }, []);
+
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* Account & Routing */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Wallet</Text>
@@ -122,10 +149,14 @@ const HomeScreen = () => {
 
         {/* Balance Card */}
         <View style={styles.balanceCard}>
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#000000" />
+          {refreshing ? (
+            <View style={styles.balanceAmount}>
+              <ActivityIndicator size="small" color="#000000" />
+            </View>
           ) : (
-            <Text style={styles.balanceAmount}>${balance?.toFixed(2) || '0.00'}</Text>
+            <Text style={styles.balanceAmount}>
+              ${balance?.toFixed(2) || '0.00'}
+            </Text>
           )}
           <View style={styles.balanceActions}>
             <TouchableOpacity
@@ -169,7 +200,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
-      </View>
+      </ScrollView>
     </ScreenWrapper>
   );
 };
@@ -177,21 +208,22 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#FFFFFF',
-    paddingBottom: 85,
+    paddingHorizontal: 16,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+    marginTop: 8,
   },
   headerText: {
     fontSize: 20,
     color: 'black',
     paddingVertical: 10,
     fontWeight: 'bold',
+    marginLeft: 4,
   },
   routingButton: {
     flexDirection: 'row',
@@ -250,6 +282,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 20,
     marginTop: 8,
+    paddingHorizontal: 16,
   },
   gridItem: {
     width: '48%',

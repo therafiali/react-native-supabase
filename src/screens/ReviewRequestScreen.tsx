@@ -73,21 +73,23 @@ const ReviewRequestScreen = () => {
   };
 
   const handleDone = () => {
-    // Navigate to MainTabs, set initial screen to Notifications with Current tab active
-    navigation.navigate('MainTabs', { 
-      screen: 'Notifications',
-      params: {
-        activeTab: 'Current',
-        notification: {
-          type: 'redeem_request',
-          title: 'Redeem Request Submitted',
-          message: `Your redeem request for ${platform} (${username}) of $${amount} has been submitted successfully.`,
-          timestamp: new Date().toISOString(),
-          isPinned: true,
-          status: 'pending'
+    setIsCompleted(false); // Close modal first
+    setTimeout(() => {
+      navigation.navigate('MainTabs', { 
+        screen: 'Notifications',
+        params: {
+          activeTab: 'Pending',
+          notification: {
+            type: 'redeem_request',
+            title: 'Redeem Request Submitted',
+            message: `Your redeem request for ${platform} (${username}) of $${amount} has been submitted successfully.`,
+            timestamp: new Date().toISOString(),
+            isPinned: true,
+            status: 'pending'
+          }
         }
-      }
-    });
+      });
+    }, 300); // Small delay to ensure smooth modal closing
   };
 
   return (
