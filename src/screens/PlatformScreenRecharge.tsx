@@ -9,19 +9,26 @@ import {
   Dimensions,
   TextInput,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const { width, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.35;
+const CARD_HEIGHT = height * 0.35;
 const SPACING = 16;
 
 type RootStackParamList = {
   EnterUsername: undefined;
+  ReviewRechargeScreen: {
+    platform: string;
+    username: string;
+    amount: string;
+  };
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EnterUsername'>;
@@ -113,6 +120,7 @@ const PlatformScreenRecharge = () => {
   const [username, setUsername] = useState('');
   const [selectedGameName, setSelectedGameName] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
 
   // Add filtered platforms logic
   const filteredPlatforms = platforms.filter(platform =>
@@ -175,136 +183,163 @@ const PlatformScreenRecharge = () => {
 
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
-        {/* Header with Search */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Select Platform to Recharge</Text>
-        </View>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1, backgroundColor: '#FFFFFF' }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <View style={styles.container}>
+          {/* Header with Search */}
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.backButtonText}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Select Platform to Recharge</Text>
+          </View>
 
-        {/* Platforms Carousel */}
-        <View style={styles.carouselWrapper}>
-          {filteredPlatforms.length > 0 ? (
-            <>
-              <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.carouselContainer}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-                snapToInterval={CARD_WIDTH + SPACING}
-                decelerationRate="fast"
-              >
-                {filteredPlatforms.map((platform) => (
-                  <TouchableOpacity
-                    key={platform.id}
-                    onPress={() => handleGameSelect(platform.id)}
-                    style={[
-                      styles.platformCard,
-                      selectedGame === platform.id && styles.selectedCard
-                    ]}
-                  >
-                    <Image
-                      source={{ uri: platform.image }}
-                      style={styles.platformImage}
-                      resizeMode="cover"
+          {/* Platforms Carousel */}
+          <View style={styles.carouselWrapper}>
+            {filteredPlatforms.length > 0 ? (
+              <>
+                <ScrollView
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.carouselContainer}
+                  onScroll={handleScroll}
+                  scrollEventThrottle={16}
+                  snapToInterval={CARD_WIDTH + SPACING}
+                  decelerationRate="fast"
+                >
+                  {filteredPlatforms.map((platform) => (
+                    <TouchableOpacity
+                      key={platform.id}
+                      onPress={() => handleGameSelect(platform.id)}
+                      style={[
+                        styles.platformCard,
+                        selectedGame === platform.id && styles.selectedCard
+                      ]}
+                    >
+                      <Image
+                        source={{ uri: platform.image }}
+                        style={styles.platformImage}
+                        resizeMode="cover"
+                      />
+                      <View style={styles.platformInfo}>
+                        <Text style={styles.platformName}>{platform.title}</Text>
+                        <Text style={styles.platformText}>Tap the button below to Redeem</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+
+                {/* Pagination Dots */}
+                <View style={styles.pagination}>
+                  {filteredPlatforms.map((_, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.paginationDot,
+                        index === activeIndex && styles.paginationDotActive,
+                      ]}
                     />
-                    <View style={styles.platformInfo}>
-                      <Text style={styles.platformName}>{platform.title}</Text>
-                      <Text style={styles.platformText}>Tap the button below to Redeem</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-
-              {/* Pagination Dots */}
-              <View style={styles.pagination}>
-                {filteredPlatforms.map((_, index) => (
-                  <View
-                    key={index}
-                    style={[
-                      styles.paginationDot,
-                      index === activeIndex && styles.paginationDotActive,
-                    ]}
-                  />
-                ))}
+                  ))}
+                </View>
+              </>
+            ) : (
+              <View style={styles.noResultsContainer}>
+                <Text style={styles.noResultsText}>No games found</Text>
+                <Text style={styles.noResultsSubText}>Try a different search term</Text>
               </View>
-            </>
-          ) : (
-            <View style={styles.noResultsContainer}>
-              <Text style={styles.noResultsText}>No games found</Text>
-              <Text style={styles.noResultsSubText}>Try a different search term</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Username Input Section */}
-        <View style={styles.bottomContainer}>
-          <Text style={styles.description}>
-            Please enter your {selectedGameName} username{'\n'}
-            you want to redeem from?
-          </Text>
-          <Text style={styles.headergameTitle}>Enter Game Username</Text>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter username..."
-              placeholderTextColor="#999"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={username}
-              onChangeText={setUsername}
-            />
+            )}
           </View>
-          <TouchableOpacity
-            style={[
-              styles.submitButton,
-              (!selectedGame || !username) && styles.submitButtonDisabled
-            ]}
-            onPress={handleSubmit}
-            disabled={!selectedGame || !username}
+
+          {/* Username Input Section */}
+          <ScrollView 
+            style={{ flex: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.submitButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Confirmation Modal */}
-        <Modal
-          visible={showConfirmModal}
-          transparent
-          animationType="fade"
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Is the username correct?</Text>
-              <Text style={styles.modalUsername}>Username: {username}</Text>
-              <Text style={styles.modalDescription}>
-                If it's correct Tap 'Proceed' and if you{'\n'}want to edit it Tap 'Edit'
+            <View style={styles.bottomContainer}>
+              <Text style={styles.description}>
+                Please enter your {selectedGameName} username{'\n'}
+                you want to redeem from?
               </Text>
-              <View style={styles.modalButtons}>
-                <TouchableOpacity 
-                  style={[styles.modalButton, styles.editButton]}
-                  onPress={() => setShowConfirmModal(false)}
-                >
-                  <Text style={[styles.modalButtonText, styles.editButtonText]}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.modalButton, styles.proceedButton]}
-                  onPress={handleProceed}
-                >
-                  <Text style={[styles.modalButtonText, styles.proceedButtonText]}>Proceed</Text>
-                </TouchableOpacity>
+              <Text style={styles.headergameTitle}>Enter Game Username</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter username..."
+                  placeholderTextColor="#999"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={username}
+                  onChangeText={setUsername}
+                />
+              </View>
+
+              {/* Add Promo Code Input */}
+              <Text style={styles.headergameTitle}>Enter Promo Code (Optional)</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter promo code..."
+                  placeholderTextColor="#999"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={promoCode}
+                  onChangeText={setPromoCode}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.submitButton,
+                  (!selectedGame || !username) && styles.submitButtonDisabled
+                ]}
+                onPress={handleSubmit}
+                disabled={!selectedGame || !username}
+              >
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+
+          {/* Confirmation Modal */}
+          <Modal
+            visible={showConfirmModal}
+            transparent
+            animationType="fade"
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Is the username correct?</Text>
+                <Text style={styles.modalUsername}>Username: {username}</Text>
+                <Text style={styles.modalDescription}>
+                  If it's correct Tap 'Proceed' and if you{'\n'}want to edit it Tap 'Edit'
+                </Text>
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity 
+                    style={[styles.modalButton, styles.editButton]}
+                    onPress={() => setShowConfirmModal(false)}
+                  >
+                    <Text style={[styles.modalButtonText, styles.editButtonText]}>Edit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[styles.modalButton, styles.proceedButton]}
+                    onPress={handleProceed}
+                  >
+                    <Text style={[styles.modalButtonText, styles.proceedButtonText]}>Proceed</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
-      </View>
+          </Modal>
+        </View>
+      </KeyboardAvoidingView>
     </ScreenWrapper>
   );
 };
@@ -332,14 +367,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   headergameTitle: {
-    fontSize: 20,
+    fontSize: width * 0.045,
     fontWeight: 'bold',
-    marginTop: 20,
-    paddingVertical: 12,
+    marginTop: height * 0.01,
+    paddingVertical: height * 0.005,
   },
   searchContainer: {
     flex: 1,
@@ -365,7 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   scrollView: {
-    height: SCREEN_HEIGHT * 0.7,
+    height: height * 0.7,
     backgroundColor: 'white',
   },
 
@@ -462,31 +497,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   bottomContainer: {
-    padding: 24,
+    padding: 16,
     paddingTop: 0,
+    flex: 1,
   },
   description: {
-    fontSize: 15,
+    fontSize: width * 0.035,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.01,
     lineHeight: 22,
   },
   inputWrapper: {
-    marginBottom: 20,
+    marginBottom: height * 0.015,
   },
   input: {
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 16,
-    padding: 16,
-    fontSize: 16,
+    padding: height * 0.015,
+    fontSize: width * 0.04,
     backgroundColor: '#FFF',
     color: '#000',
+    height: height * 0.06,
   },
   submitButton: {
     backgroundColor: '#000',
-    paddingVertical: 16,
+    paddingVertical: height * 0.018,
     borderRadius: 16,
     alignItems: 'center',
     shadowColor: '#000',
@@ -497,6 +534,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    marginTop: height * 0.02,
   },
   submitButtonDisabled: {
     backgroundColor: '#CCCCCC',

@@ -46,7 +46,6 @@ const ReferralScreen = () => {
 
         <View style={styles.content}>
           <View style={styles.codeContainer}>
-            <Text style={styles.codeText}>{referralCode}</Text>
             <TouchableOpacity onPress={handleShare}>
               <Icon name="content-copy" size={24} color="#000" />
             </TouchableOpacity>

@@ -15,6 +15,7 @@ import ScreenWrapper from '../components/ScreenWrapper';
 type RootStackParamList = {
   SelectPlatform: undefined;
   EnterUsername: undefined;
+  PlatformScreenRecharge: undefined;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'SelectPlatform'>;
@@ -44,7 +45,7 @@ const GameActionScreen = () => {
       Alert.alert('Invalid Amount', 'Amount must be at least $10');
     } else {
       setError('');
-      navigation.navigate('Promocode');
+      navigation.navigate('PlatformScreenRecharge');
     }
   };
 
@@ -117,13 +118,13 @@ const GameActionScreen = () => {
 
         {/* Action Buttons */}
         <View style={styles.actionContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.rechargeButton}
             onPress={handleRecharge}
           >
             <Text style={styles.buttonText}>Recharge</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.redeemButton}
             onPress={handleRedeem}
           >
@@ -228,6 +229,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: '100%',
     paddingBottom: 20,
+    bottom: 50,
   },
   rechargeButton: {
     flex: 1,

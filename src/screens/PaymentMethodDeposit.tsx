@@ -12,7 +12,7 @@ import {
     Easing,
     TextInput,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
@@ -70,7 +70,7 @@ const PaymentMethodDeposit = () => {
     const navigation = useNavigation<NavigationProp>();
     const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(60);
+    const [timeLeft, setTimeLeft] = useState(600);
     const progressAnim = useRef(new Animated.Value(0)).current;
     const [troubleModalVisible, setTroubleModalVisible] = useState(false);
     const [troubleMessage, setTroubleMessage] = useState('');
@@ -79,6 +79,7 @@ const PaymentMethodDeposit = () => {
     const pulseAnim = useRef(new Animated.Value(1)).current;
     const [extensionModalVisible, setExtensionModalVisible] = useState(false);
     const [hasExtended, setHasExtended] = useState(false);
+    const isFocused = useIsFocused();
 
     // Update progress with timer
     useEffect(() => {
@@ -124,8 +125,8 @@ const PaymentMethodDeposit = () => {
                     clearInterval(timer);
                     return 0;
                 }
-                // Show extension modal when 60 seconds remaining and hasn't extended yet
-                if (prevTime === 60 && !hasExtended) {
+                // Only show extension modal when on this screen
+                if (prevTime === 60 && !hasExtended && isFocused) {
                     setExtensionModalVisible(true);
                 }
                 return prevTime - 1;
@@ -133,7 +134,7 @@ const PaymentMethodDeposit = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [hasExtended]);
+    }, [hasExtended, isFocused]);
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -522,19 +523,20 @@ const styles = StyleSheet.create({
     },
     methodsContainer: {
         flex: 1,
-        padding: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
     },
     paymentMethod: {
-        marginBottom: 12,
+        marginBottom: 8,
         backgroundColor: '#FFFFFF',
-        borderRadius: 16,
+        borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
         overflow: 'hidden',
-        height: 72, // Fixed height for consistency
+        height: height * 0.08, // Responsive height based on screen height
     },
     selectedMethod: {
         borderColor: '#00D54B',
@@ -547,15 +549,14 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     iconContainer: {
-        width: 72,
+        width: width * 0.15, // Responsive width based on screen width
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#00D54B',
     },
     methodIcon: {
-        width: 50,
-        height: 50,
+        width: width * 0.08,
+        height: width * 0.08,
         resizeMode: 'contain',
     },
     methodInfo: {
@@ -563,13 +564,13 @@ const styles = StyleSheet.create({
         paddingLeft: 16,
     },
     methodName: {
-        fontSize: 17,
+        fontSize: width * 0.04,
         fontWeight: '500',
         color: '#000000',
-        marginBottom: 4,
+        marginBottom: 2,
     },
     methodSubtext: {
-        fontSize: 13,
+        fontSize: width * 0.03,
         color: '#6B7280',
         fontWeight: '400',
     },

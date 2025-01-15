@@ -55,7 +55,7 @@ const AmountDepositScreen = () => {
       );
       return;
     }
-    
+
     setIsLoading(true);
     // Update loading message every 2.5 seconds
     const interval = setInterval(() => {
@@ -86,7 +86,7 @@ const AmountDepositScreen = () => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
@@ -148,7 +148,7 @@ const AmountDepositScreen = () => {
         </View>
 
         {/* Continue Button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.continueButton}
           onPress={handleContinue}
         >
@@ -265,6 +265,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: '90%',
     marginBottom: 20,
+    bottom: 50,
   },
   continueButtonText: {
     color: '#FFFFFF',

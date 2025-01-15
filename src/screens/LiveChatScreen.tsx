@@ -48,7 +48,7 @@ const LiveChatScreen = () => {
       };
       setMessages(prev => [...prev, message]);
       setNewMessage('');
-      
+
       // Simulate agent response
       setTimeout(() => {
         const agentResponse: Message = {
@@ -154,19 +154,14 @@ const LiveChatScreen = () => {
     <ScreenWrapper>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
-            <Icon name="close" size={24} color="#000" />
-          </TouchableOpacity>
+
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>Support Chat</Text>
-            <Icon name="check-circle" size={16} color="#22C55E" />
           </View>
-          <View style={styles.userAvatar}>
-            <Text style={styles.userInitials}>JD</Text>
-          </View>
+
         </View>
 
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardView}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
@@ -188,8 +183,8 @@ const LiveChatScreen = () => {
                     message.isUser ? styles.userMessageBubble : styles.agentMessageBubble,
                   ]}>
                   {message.image ? (
-                    <Image 
-                      source={{ uri: message.image }} 
+                    <Image
+                      source={{ uri: message.image }}
                       style={styles.messageImage}
                       resizeMode="cover"
                     />
@@ -215,14 +210,14 @@ const LiveChatScreen = () => {
                 returnKeyType="send"
               />
               {newMessage.trim() ? (
-                <TouchableOpacity 
-                  style={styles.sendButton} 
+                <TouchableOpacity
+                  style={styles.sendButton}
                   onPress={handleSend}
                 >
                   <Icon name="send" size={20} color="#22C55E" />
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.addButton}
                   onPress={handleAttachment}
                 >
@@ -256,15 +251,17 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 4,
   },
-  headerContent: {
+  headerContent  : {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 8,
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: 20,
+    color: 'black',
+    paddingVertical: 10,
+    fontWeight: 'bold',
   },
   userAvatar: {
     width: 32,
